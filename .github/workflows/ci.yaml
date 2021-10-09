@@ -59,7 +59,7 @@ jobs:
             --verbose \
             --cov-report term-missing \
             --cov-report xml \
-            --cov=package_name tests
+            --cov=aioridwell tests
 
       - uses: codecov/codecov-action@v1
         with:

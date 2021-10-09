@@ -1,11 +1,11 @@
-# 🚰 package_name: DESCRIPTION
+# ♻️ aioridwell: DESCRIPTION
 
-[![CI](https://github.com/bachya/package_name/workflows/CI/badge.svg)](https://github.com/bachya/package_name/actions)
-[![PyPi](https://img.shields.io/pypi/v/package_name.svg)](https://pypi.python.org/pypi/package_name)
-[![Version](https://img.shields.io/pypi/pyversions/package_name.svg)](https://pypi.python.org/pypi/package_name)
-[![License](https://img.shields.io/pypi/l/package_name.svg)](https://github.com/bachya/package_name/blob/master/LICENSE)
-[![Code Coverage](https://codecov.io/gh/bachya/package_name/branch/master/graph/badge.svg)](https://codecov.io/gh/bachya/package_name)
-[![Maintainability](https://api.codeclimate.com/v1/badges/a03c9e96f19a3dc37f98/maintainability)](https://codeclimate.com/github/bachya/package_name/maintainability)
+[![CI](https://github.com/bachya/aioridwell/workflows/CI/badge.svg)](https://github.com/bachya/aioridwell/actions)
+[![PyPi](https://img.shields.io/pypi/v/aioridwell.svg)](https://pypi.python.org/pypi/aioridwell)
+[![Version](https://img.shields.io/pypi/pyversions/aioridwell.svg)](https://pypi.python.org/pypi/aioridwell)
+[![License](https://img.shields.io/pypi/l/aioridwell.svg)](https://github.com/bachya/aioridwell/blob/master/LICENSE)
+[![Code Coverage](https://codecov.io/gh/bachya/aioridwell/branch/master/graph/badge.svg)](https://codecov.io/gh/bachya/aioridwell)
+[![Maintainability](https://api.codeclimate.com/v1/badges/a03c9e96f19a3dc37f98/maintainability)](https://codeclimate.com/github/bachya/aioridwell/maintainability)
 [![Say Thanks](https://img.shields.io/badge/SayThanks-!-1EAEDB.svg)](https://saythanks.io/to/bachya)
 
 DESCRIPTION
@@ -19,12 +19,12 @@ DESCRIPTION
 # Installation
 
 ```python
-pip install package_name
+pip install aioridwell
 ```
 
 # Python Versions
 
-`package_name` is currently supported on:
+`aioridwell` is currently supported on:
 
 * Python 3.8
 * Python 3.9 
@@ -33,9 +33,9 @@ pip install package_name
 
 # Contributing
 
-1. [Check for open features/bugs](https://github.com/bachya/package_name/issues)
-  or [initiate a discussion on one](https://github.com/bachya/package_name/issues/new).
-2. [Fork the repository](https://github.com/bachya/package_name/fork).
+1. [Check for open features/bugs](https://github.com/bachya/aioridwell/issues)
+  or [initiate a discussion on one](https://github.com/bachya/aioridwell/issues/new).
+2. [Fork the repository](https://github.com/bachya/aioridwell/fork).
 3. (_optional, but highly recommended_) Create a virtual environment: `python3 -m venv .venv`
 4. (_optional, but highly recommended_) Enter the virtual environment: `source ./.venv/bin/activate`
 5. Install the dev environment: `script/setup`
