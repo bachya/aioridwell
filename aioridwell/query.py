@@ -1,15 +1,10 @@
 """Define query strings used by the Ridwell API."""
-QUERY_CREATE_AUTHENTICATION = """
-mutation createAuthentication($input: CreateAuthenticationInput!) {
-  createAuthentication(input: $input) {
-    authenticationToken
-  }
-}
-"""
-
-QUERY_SUBSCRIPTION_DATA = """
+QUERY_ACCOUNT_DATA = """
 query user($id: ID!) {
   user(id: $id) {
+    fullName
+    email
+    phone
     accounts {
       id
       address {
@@ -21,27 +16,49 @@ query user($id: ID!) {
       activeSubscription {
         id
         state
-        futureSubscriptionPickups {
-          startOn
-          pickupOffers {
-            category {
-              slug
-            }
-          }
-        }
       }
     }
   }
 }
 """
 
-QUERY_USER_DATA = """
-query user($id: ID!) {
-  user(id: $id) {
+QUERY_AUTH_DATA = """
+mutation createAuthentication($input: CreateAuthenticationInput!) {
+  createAuthentication(input: $input) {
+    authenticationToken
+  }
+}
+"""
+
+QUERY_SUBSCRIPTION_PICKUP_QUOTE = """
+query subscriptionPickupQuote($input: SubscriptionPickupQuoteInput!) {
+  subscriptionPickupQuote(input: $input) {
+    totalCents
+  }
+}
+"""
+
+QUERY_SUBSCRIPTION_PICKUPS = """
+query upcomingSubscriptionPickups($subscriptionId: ID!) {
+  upcomingSubscriptionPickups(subscriptionId: $subscriptionId) {
     id
-    fullName
-    email
-    phone
+    state
+    pickupOn
+    pickupProductSelections {
+      pickupOfferPickupProduct {
+        pickupOffer {
+          id
+          priority
+          category {
+            name
+          }
+        }
+        pickupProduct {
+          id
+        }
+      }
+      quantity
+    }
   }
 }
 """

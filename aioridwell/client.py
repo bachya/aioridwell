@@ -2,13 +2,14 @@
 from __future__ import annotations
 
 import asyncio
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, datetime
-from typing import Any, Dict, TypedDict, cast
+from typing import Any, Callable, Dict, Literal, TypedDict, cast
 
 from aiohttp import ClientSession, ClientTimeout
 from aiohttp.client_exceptions import ClientError
 import jwt
+from titlecase import titlecase
 
 from .const import LOGGER
 from .errors import (
@@ -17,13 +18,30 @@ from .errors import (
     TokenExpiredError,
     raise_for_data_error,
 )
-from .query import QUERY_CREATE_AUTHENTICATION, QUERY_SUBSCRIPTION_DATA, QUERY_USER_DATA
+from .query import (
+    QUERY_ACCOUNT_DATA,
+    QUERY_AUTH_DATA,
+    QUERY_SUBSCRIPTION_PICKUP_QUOTE,
+    QUERY_SUBSCRIPTION_PICKUPS,
+)
 
 API_BASE_URL = "https://api.ridwell.com"
 
 DEFAULT_RETRIES = 3
 DEFAULT_RETRY_DELAY = 1
 DEFAULT_TIMEOUT = 10
+
+STANDARD_PICKUP_TYPES = [
+    "Batteries",
+    "Beyond the Bin",
+    "Fluorescent Light Tubes",
+    "Latex Paint",
+    "Light Bulbs",
+    "Paint",
+    "Plastic Film",
+    "Styrofoam",
+    "Threads",
+]
 
 
 class AddressType(TypedDict):
@@ -36,17 +54,111 @@ class AddressType(TypedDict):
 
 
 @dataclass(frozen=True)
-class PickupEvent:
-    """Define a waste pickup event."""
+class RidwellAccount:  # pylint: disable=too-many-instance-attributes
+    """Define a Ridwell account."""
 
+    _async_request: Callable
+
+    account_id: str
     address: AddressType
-    pickup_date: date
-    pickup_types: list[str]
+    email: str
+    full_name: str
+    phone: str
+    subscription_id: str
     subscription_active: bool
+
+    async def async_get_pickup_events(self) -> list[RidwellPickupEvent]:
+        """Get pickup events for this subscription."""
+        resp = await self._async_request(
+            json={
+                "operationName": "upcomingSubscriptionPickups",
+                "variables": {"subscriptionId": self.subscription_id},
+                "query": QUERY_SUBSCRIPTION_PICKUPS,
+            },
+        )
+
+        return [
+            RidwellPickupEvent(
+                self._async_request,
+                datetime.strptime(event_data["pickupOn"], "%Y-%m-%d").date(),
+                event_data["id"],
+                [
+                    RidwellPickup(
+                        titlecase(
+                            pickup["pickupOfferPickupProduct"]["pickupOffer"][
+                                "category"
+                            ]["name"]
+                        ),
+                        pickup["pickupOfferPickupProduct"]["pickupOffer"]["id"],
+                        pickup["pickupOfferPickupProduct"]["pickupOffer"]["priority"],
+                        pickup["pickupOfferPickupProduct"]["pickupProduct"]["id"],
+                        pickup["quantity"],
+                    )
+                    for pickup in event_data["pickupProductSelections"]
+                ],
+                event_data["state"],
+            )
+            for event_data in resp["data"]["upcomingSubscriptionPickups"]
+        ]
+
+
+@dataclass(frozen=True)
+class RidwellPickupEvent:
+    """Define a Ridwell pickup event."""
+
+    _async_request: Callable
+
+    pickup_date: date
+    event_id: str
+    pickups: list[RidwellPickup]
+    state: Literal["initialized", "scheduled"]
+
+    async def async_get_estimated_cost(self) -> float:
+        """Get the estimated cost (USD) of this pickup based on its pickup types."""
+        if not self.pickups:
+            return 0.0
+
+        resp = await self._async_request(
+            json={
+                "operationName": "subscriptionPickupQuote",
+                "variables": {
+                    "input": {
+                        "subscriptionPickupId": self.event_id,
+                        "addOnSelections": [
+                            {
+                                "productId": pickup.product_id,
+                                "offerId": pickup.offer_id,
+                                "quantity": pickup.quantity,
+                            }
+                            for pickup in self.pickups
+                        ],
+                    }
+                },
+                "query": QUERY_SUBSCRIPTION_PICKUP_QUOTE,
+            },
+        )
+
+        return cast(float, resp["data"]["subscriptionPickupQuote"]["totalCents"] / 100)
+
+
+@dataclass()
+class RidwellPickup:
+    """Define a Ridwell pickup (i.e., the thing being picked up)."""
+
+    category: str
+    offer_id: str
+    priority: int
+    product_id: str
+    quantity: int
+    special: bool = field(init=False)
+
+    def __post_init__(self) -> None:
+        """Perform some post-init init."""
+        self.special = self.category not in STANDARD_PICKUP_TYPES
 
 
 def decode_jwt(encoded_jwt: str) -> dict[str, Any]:
-    """Decode a JWT and return its data (including actual datetimes)."""
+    """Decode and return a JWT."""
     return cast(
         Dict[str, Any],
         jwt.decode(
@@ -58,7 +170,7 @@ def decode_jwt(encoded_jwt: str) -> dict[str, Any]:
     )
 
 
-class Client:  # pylint: disable=too-few-public-methods,too-many-instance-attributes
+class Client:  # pylint: disable=too-many-instance-attributes
     """Define the client."""
 
     def __init__(
@@ -93,7 +205,7 @@ class Client:  # pylint: disable=too-few-public-methods,too-many-instance-attrib
                 "variables": {
                     "input": {"emailOrPhone": self._email, "password": self._password}
                 },
-                "query": QUERY_CREATE_AUTHENTICATION,
+                "query": QUERY_AUTH_DATA,
             },
         )
         self._token = resp["data"]["createAuthentication"]["authenticationToken"]
@@ -101,36 +213,30 @@ class Client:  # pylint: disable=too-few-public-methods,too-many-instance-attrib
         token_data = decode_jwt(self._token)
         self.user_id = token_data["ridwell/userId"]
 
-    async def async_get_pickup_events(self) -> list[PickupEvent]:
-        """Get upcoming pickup events."""
-        data = await self.async_request(
+    async def async_get_accounts(self) -> dict[str, RidwellAccount]:
+        """Get all accounts for this user."""
+        resp = await self.async_request(
             json={
                 "operationName": "user",
                 "variables": {"id": self.user_id},
-                "query": QUERY_SUBSCRIPTION_DATA,
+                "query": QUERY_ACCOUNT_DATA,
             }
         )
+        user_data = resp["data"]["user"]
 
-        return [
-            PickupEvent(
+        return {
+            account["id"]: RidwellAccount(
+                self.async_request,
+                account["id"],
                 account["address"],
-                datetime.strptime(event["startOn"], "%Y-%m-%d").date(),
-                sorted([waste["category"]["slug"] for waste in event["pickupOffers"]]),
+                user_data["email"],
+                user_data["fullName"],
+                user_data["phone"],
+                account["activeSubscription"]["id"],
                 account["activeSubscription"]["state"] == "active",
             )
-            for account in data["data"]["user"]["accounts"]
-            for event in account["activeSubscription"]["futureSubscriptionPickups"]
-        ]
-
-    async def async_get_user_data(self) -> dict[str, Any]:
-        """Get all user data."""
-        return await self.async_request(
-            json={
-                "operationName": "user",
-                "variables": {"id": self.user_id},
-                "query": QUERY_USER_DATA,
-            }
-        )
+            for account in user_data["accounts"]
+        }
 
     async def async_request(self, **kwargs: dict[str, Any]) -> dict[str, Any]:
         """Make an API request (based on a Ridwell "query string")."""
@@ -164,7 +270,7 @@ class Client:  # pylint: disable=too-few-public-methods,too-many-instance-attrib
                     raise_for_data_error(data)
                 except TokenExpiredError:
                     retry += 1
-                    LOGGER.debug(
+                    LOGGER.info(
                         "Token failed; refreshing and trying again (attempt %s of %s)",
                         retry,
                         self._request_retries,
@@ -182,7 +288,9 @@ class Client:  # pylint: disable=too-few-public-methods,too-many-instance-attrib
         if not use_running_session:
             await session.close()
 
-        LOGGER.debug("Received data: %s", data)
+        LOGGER.debug(
+            "Received data (query: %s): %s", kwargs.get("json", {}).get("query"), data
+        )
 
         return data
 

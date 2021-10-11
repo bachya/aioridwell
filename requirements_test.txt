@@ -5,4 +5,5 @@ pytest-aiohttp==0.3.0
 pytest-cov==3.0.0
 pytest==6.2.5
 pytz==2021.3
+titlecase==2.3
 types-pytz==2021.1.2

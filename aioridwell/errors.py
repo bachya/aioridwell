@@ -30,7 +30,7 @@ class TokenExpiredError(RidwellError):
 
 DATA_ERROR_MAP = {
     "The password you entered is incorrect. Please try again.": InvalidCredentialsError,
-    "login_required": TokenExpiredError,
+    "login required": TokenExpiredError,
 }
 
 

@@ -19,13 +19,22 @@ async def main() -> None:
     async with ClientSession() as session:
         try:
             client = await async_get_client(EMAIL, PASSWORD, session=session)
-            # _LOGGER.info("User ID: %s", client.user_id)
+            _LOGGER.info("User ID: %s", client.user_id)
 
-            # user_data = await client.async_get_user_data()
-            # _LOGGER.info("User Data: %s", user_data)
+            accounts = await client.async_get_accounts()
+            _LOGGER.info("Accounts: %s", accounts)
 
-            pickup_events = await client.async_get_pickup_events()
-            _LOGGER.info("Subscription Data: %s", pickup_events)
+            for account in accounts.values():
+                events = await account.async_get_pickup_events()
+                _LOGGER.info("Events for account ID %s: %s", account.account_id, events)
+
+                first_event = events[0]
+                estimated_cost = await first_event.async_get_estimated_cost()
+                _LOGGER.info(
+                    "Estimated cost for event %s: %s",
+                    first_event.event_id,
+                    estimated_cost,
+                )
         except RidwellError as err:
             _LOGGER.error("There was an error: %s", err)
 
