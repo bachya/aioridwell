@@ -1,0 +1,22 @@
+{
+  "errors": [
+    {
+      "message": "login required",
+      "locations": [
+        {
+          "line": 2,
+          "column": 3
+        }
+      ],
+      "path": [
+        "user"
+      ],
+      "extensions": {
+        "code": "UNAUTHENTICATED"
+      }
+    }
+  ],
+  "data": {
+    "user": null
+  }
+}

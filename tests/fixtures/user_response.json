@@ -1,0 +1,24 @@
+{
+	"data": {
+		"user": {
+			"fullName": "Jane Doe",
+			"email": "user@email.com",
+			"phone": "1234567890",
+			"accounts": [
+				{
+					"id": "accountId1",
+					"address": {
+						"street1": "123 Main Street",
+						"city": "Seattle",
+						"subdivision": "WA",
+						"postalCode": "98101"
+					},
+					"activeSubscription": {
+						"id": "subscriptionId1",
+						"state": "active"
+					}
+				}
+			]
+		}
+	}
+}
