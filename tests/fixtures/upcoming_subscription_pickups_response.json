@@ -1,0 +1,49 @@
+{
+	"data": {
+		"upcomingSubscriptionPickups": [
+			{
+				"id": "pickup1",
+				"state": "scheduled",
+				"pickupOn": "2021-10-13",
+				"pickupProductSelections": [
+					{
+						"pickupOfferPickupProduct": {
+							"pickupOffer": {
+								"id": "pickupOffer1",
+								"priority": 1,
+								"category": {
+									"name": "Beyond the Bin"
+								}
+							},
+							"pickupProduct": {
+								"id": "pickupProduct1"
+							}
+						},
+						"quantity": 1
+					},
+					{
+						"pickupOfferPickupProduct": {
+							"pickupOffer": {
+								"id": "pickupOffer2",
+								"priority": 2,
+								"category": {
+									"name": "Chocolate"
+								}
+							},
+							"pickupProduct": {
+								"id": "pickupProduct2"
+							}
+						},
+						"quantity": 1
+					}
+				]
+			},
+			{
+				"id": "pickup2",
+				"state": "initialized",
+				"pickupOn": "2021-10-27",
+				"pickupProductSelections": []
+			}
+		]
+	}
+}

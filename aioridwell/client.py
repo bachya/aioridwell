@@ -7,7 +7,7 @@ from datetime import date, datetime
 from typing import Any, Callable, Dict, Literal, TypedDict, cast
 
 from aiohttp import ClientSession, ClientTimeout
-from aiohttp.client_exceptions import ClientError
+from aiohttp.client_exceptions import ClientError, ContentTypeError
 import jwt
 from titlecase import titlecase
 
@@ -57,7 +57,7 @@ class AddressType(TypedDict):
 class RidwellAccount:  # pylint: disable=too-many-instance-attributes
     """Define a Ridwell account."""
 
-    _async_request: Callable
+    _async_request: Callable = field(compare=False)
 
     account_id: str
     address: AddressType
@@ -80,8 +80,8 @@ class RidwellAccount:  # pylint: disable=too-many-instance-attributes
         return [
             RidwellPickupEvent(
                 self._async_request,
-                datetime.strptime(event_data["pickupOn"], "%Y-%m-%d").date(),
                 event_data["id"],
+                datetime.strptime(event_data["pickupOn"], "%Y-%m-%d").date(),
                 [
                     RidwellPickup(
                         titlecase(
@@ -103,13 +103,29 @@ class RidwellAccount:  # pylint: disable=too-many-instance-attributes
 
 
 @dataclass(frozen=True)
+class RidwellPickup:
+    """Define a Ridwell pickup (i.e., the thing being picked up)."""
+
+    category: str
+    offer_id: str
+    priority: int
+    product_id: str
+    quantity: int
+    special: bool = field(init=False)
+
+    def __post_init__(self) -> None:
+        """Perform some post-init init."""
+        object.__setattr__(self, "special", self.category not in STANDARD_PICKUP_TYPES)
+
+
+@dataclass(frozen=True)
 class RidwellPickupEvent:
     """Define a Ridwell pickup event."""
 
-    _async_request: Callable
+    _async_request: Callable = field(compare=False)
+    _event_id: str
 
     pickup_date: date
-    event_id: str
     pickups: list[RidwellPickup]
     state: Literal["initialized", "scheduled"]
 
@@ -123,7 +139,7 @@ class RidwellPickupEvent:
                 "operationName": "subscriptionPickupQuote",
                 "variables": {
                     "input": {
-                        "subscriptionPickupId": self.event_id,
+                        "subscriptionPickupId": self._event_id,
                         "addOnSelections": [
                             {
                                 "productId": pickup.product_id,
@@ -139,22 +155,6 @@ class RidwellPickupEvent:
         )
 
         return cast(float, resp["data"]["subscriptionPickupQuote"]["totalCents"] / 100)
-
-
-@dataclass()
-class RidwellPickup:
-    """Define a Ridwell pickup (i.e., the thing being picked up)."""
-
-    category: str
-    offer_id: str
-    priority: int
-    product_id: str
-    quantity: int
-    special: bool = field(init=False)
-
-    def __post_init__(self) -> None:
-        """Perform some post-init init."""
-        self.special = self.category not in STANDARD_PICKUP_TYPES
 
 
 def decode_jwt(encoded_jwt: str) -> dict[str, Any]:
@@ -257,11 +257,10 @@ class Client:  # pylint: disable=too-many-instance-attributes
             if self._token:
                 kwargs["headers"]["Authorization"] = f"Bearer {self._token}"
             async with session.request("post", API_BASE_URL, **kwargs) as resp:
-                data = await resp.json()
-
                 try:
+                    data = await resp.json()
                     resp.raise_for_status()
-                except ClientError as err:
+                except (ClientError, ContentTypeError) as err:
                     raise RequestError(err) from err
 
                 # Ridwell's API can return HTTP 200 responses that are still errors, so
