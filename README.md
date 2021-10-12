@@ -8,7 +8,8 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/9c1dcc1c991cecb06eda/maintainability)](https://codeclimate.com/github/bachya/aioridwell/maintainability)
 [![Say Thanks](https://img.shields.io/badge/SayThanks-!-1EAEDB.svg)](https://saythanks.io/to/bachya)
 
-DESCRIPTION
+`aioridwell` is a Python 3, asyncio-friendly library for interacting with
+[Ridwell](http://ridwell.com) to view information on upcoming recycling pickups.
 
 - [Installation](#installation)
 - [Python Versions](#python-versions)
