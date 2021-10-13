@@ -111,11 +111,11 @@ class RidwellPickup:
     priority: int
     product_id: str
     quantity: int
-    special: bool = field(init=False)
+    rotating: bool = field(init=False)
 
     def __post_init__(self) -> None:
         """Perform some post-init init."""
-        object.__setattr__(self, "special", self.category not in STANDARD_PICKUP_TYPES)
+        object.__setattr__(self, "rotating", self.category not in STANDARD_PICKUP_TYPES)
 
 
 @dataclass(frozen=True)
