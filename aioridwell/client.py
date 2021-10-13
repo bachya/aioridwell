@@ -15,6 +15,7 @@ from .const import LOGGER
 from .errors import (
     InvalidCredentialsError,
     RequestError,
+    RidwellError,
     TokenExpiredError,
     raise_for_data_error,
 )
@@ -75,6 +76,14 @@ class RidwellAccount:  # pylint: disable=too-many-instance-attributes
     phone: str
     subscription_id: str
     subscription_active: bool
+
+    async def async_get_next_pickup_event(self) -> RidwellPickupEvent:
+        """Get the next pickup event based on today's date."""
+        pickup_events = await self.async_get_pickup_events()
+        for event in pickup_events:
+            if event.pickup_date >= date.today():
+                return event
+        raise RidwellError("No pickup events found after today")
 
     async def async_get_pickup_events(self) -> list[RidwellPickupEvent]:
         """Get pickup events for this subscription."""
