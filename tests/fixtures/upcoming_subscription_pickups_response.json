@@ -12,7 +12,7 @@
 								"id": "pickupOffer1",
 								"priority": 1,
 								"category": {
-									"name": "Beyond the Bin"
+									"name": "Threads"
 								}
 							},
 							"pickupProduct": {
@@ -25,13 +25,28 @@
 						"pickupOfferPickupProduct": {
 							"pickupOffer": {
 								"id": "pickupOffer2",
+								"priority": 1,
+								"category": {
+									"name": "Beyond the Bin"
+								}
+							},
+							"pickupProduct": {
+								"id": "pickupProduct2"
+							}
+						},
+						"quantity": 2
+					},
+					{
+						"pickupOfferPickupProduct": {
+							"pickupOffer": {
+								"id": "pickupOffer3",
 								"priority": 2,
 								"category": {
 									"name": "Chocolate"
 								}
 							},
 							"pickupProduct": {
-								"id": "pickupProduct2"
+								"id": "pickupProduct3"
 							}
 						},
 						"quantity": 1
