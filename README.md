@@ -1,4 +1,4 @@
-# ♻️ aioridwell: DESCRIPTION
+# ♻️ aioridwell: A Python3, asyncio-based API for interacting with Ridwell waste recycling
 
 [![CI](https://github.com/bachya/aioridwell/workflows/CI/badge.svg)](https://github.com/bachya/aioridwell/actions)
 [![PyPi](https://img.shields.io/pypi/v/aioridwell.svg)](https://pypi.python.org/pypi/aioridwell)
