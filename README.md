@@ -1,4 +1,4 @@
-# ♻️ aioridwell: A Python3, asyncio-based API for interacting with Ridwell waste recycling
+# ♻️ aioridwell: A Python3, asyncio-based API for interacting with Ridwell
 
 [![CI](https://github.com/bachya/aioridwell/workflows/CI/badge.svg)](https://github.com/bachya/aioridwell/actions)
 [![PyPi](https://img.shields.io/pypi/v/aioridwell.svg)](https://pypi.python.org/pypi/aioridwell)
@@ -9,7 +9,7 @@
 [![Say Thanks](https://img.shields.io/badge/SayThanks-!-1EAEDB.svg)](https://saythanks.io/to/bachya)
 
 `aioridwell` is a Python 3, asyncio-friendly library for interacting with
-[Ridwell](http://ridwell.com) to view information on upcoming recycling pickups.
+[Ridwell](https://ridwell.com) to view information on upcoming recycling pickups.
 
 - [Installation](#installation)
 - [Python Versions](#python-versions)
