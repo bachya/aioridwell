@@ -131,12 +131,12 @@ The `RidwellPickupEvent` object comes with some useful properties:
 
 Likewise, the `RidwellPickup` object comes with some useful properties:
 
-* `category`: the type of waste being picked up
+* `category`: the category of the pickup (`standard`, `rotating`, or `add_on`)
+* `name`: the name of the item being picked up
 * `offer_id`: the Ridwell ID for this particular offer
 * `priority`: the pickup priority
 * `product_id`: the Ridwell ID for this particular product
 * `quantity`: the amount of the product being picked up
-* `rotating`: whether this is a rotating pickup type
 
 ### Calculating a Pickup Event's Esimated Cost
 
