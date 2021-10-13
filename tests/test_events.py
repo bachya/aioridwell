@@ -103,13 +103,13 @@ async def test_get_pickup_events(
         assert pickup_events[0].pickups[0].priority == 1
         assert pickup_events[0].pickups[0].product_id == "pickupProduct1"
         assert pickup_events[0].pickups[0].quantity == 1
-        assert pickup_events[0].pickups[0].special is False
+        assert pickup_events[0].pickups[0].rotating is False
         assert pickup_events[0].pickups[1].category == "Chocolate"
         assert pickup_events[0].pickups[1].offer_id == "pickupOffer2"
         assert pickup_events[0].pickups[1].priority == 2
         assert pickup_events[0].pickups[1].product_id == "pickupProduct2"
         assert pickup_events[0].pickups[1].quantity == 1
-        assert pickup_events[0].pickups[1].special is True
+        assert pickup_events[0].pickups[1].rotating is True
 
     aresponses.assert_plan_strictly_followed()
 
