@@ -35,6 +35,9 @@ CATEGORY_ADD_ON = "add_on"
 CATEGORY_ROTATING = "rotating"
 CATEGORY_STANDARD = "standard"
 
+EVENT_STATE_INITIALIIZED = "initialized"
+EVENT_STATE_SCHEDULED = "scheduled"
+
 PICKUP_TYPES_ADD_ON = [
     "Beyond the Bin",
     "Fluorescent Light Tubes",
@@ -118,7 +121,7 @@ class RidwellPickup:
     product_id: str
     quantity: int
 
-    category: str = field(init=False)
+    category: Literal["add_on", "rotating", "standard"] = field(init=False)
 
     def __post_init__(self) -> None:
         """Perform some post-init init."""
