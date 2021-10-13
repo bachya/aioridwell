@@ -288,7 +288,9 @@ class Client:  # pylint: disable=too-many-instance-attributes
             await session.close()
 
         LOGGER.debug(
-            "Received data (query: %s): %s", kwargs.get("json", {}).get("query"), data
+            "Received data (operation: %s): %s",
+            kwargs.get("json", {}).get("operationName"),
+            data,
         )
 
         return data
