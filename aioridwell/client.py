@@ -31,15 +31,21 @@ DEFAULT_RETRIES = 3
 DEFAULT_RETRY_DELAY = 1
 DEFAULT_TIMEOUT = 10
 
-STANDARD_PICKUP_TYPES = [
-    "Batteries",
+CATEGORY_ADD_ON = "add_on"
+CATEGORY_ROTATING = "rotating"
+CATEGORY_STANDARD = "standard"
+
+PICKUP_TYPES_ADD_ON = [
     "Beyond the Bin",
     "Fluorescent Light Tubes",
     "Latex Paint",
-    "Light Bulbs",
     "Paint",
-    "Plastic Film",
     "Styrofoam",
+]
+PICKUP_TYPES_STANDARD = [
+    "Batteries",
+    "Light Bulbs",
+    "Plastic Film",
     "Threads",
 ]
 
@@ -106,16 +112,23 @@ class RidwellAccount:  # pylint: disable=too-many-instance-attributes
 class RidwellPickup:
     """Define a Ridwell pickup (i.e., the thing being picked up)."""
 
-    category: str
+    name: str
     offer_id: str
     priority: int
     product_id: str
     quantity: int
-    rotating: bool = field(init=False)
+
+    category: str = field(init=False)
 
     def __post_init__(self) -> None:
         """Perform some post-init init."""
-        object.__setattr__(self, "rotating", self.category not in STANDARD_PICKUP_TYPES)
+        if self.name in PICKUP_TYPES_ADD_ON:
+            category = CATEGORY_ADD_ON
+        elif self.name in PICKUP_TYPES_STANDARD:
+            category = CATEGORY_STANDARD
+        else:
+            category = CATEGORY_ROTATING
+        object.__setattr__(self, "category", category)
 
 
 @dataclass(frozen=True)
