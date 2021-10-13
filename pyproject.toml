@@ -64,6 +64,7 @@ titlecase = "^2.3"
 
 [tool.poetry.dev-dependencies]
 aresponses = "^2.0.0"
+freezegun = "^1.1.0"
 pre-commit = "^2.0.1"
 pytest = "^6.0.0"
 pytest-aiohttp = "^0.3.0"

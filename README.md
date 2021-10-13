@@ -103,7 +103,7 @@ The `RidwellAccount` object comes with some useful properties:
 
 ## Getting Pickup Events
 
-Getting all pickup events associated with an account is easy, too:
+Getting pickup events associated with an account is easy, too:
 
 ```python
 import asyncio
@@ -118,6 +118,10 @@ async def main() -> None:
     for account in accounts.values():
         events = await account.async_get_pickup_events()
         # >>> [RidwellPickupEvent(...), ...]
+
+        # You can also get just the next pickup event from today's date:
+        next_event = await account.async_get_next_pickup_event()
+        # >>> RidwellPickupEvent(...)
 
 
 asyncio.run(main())
