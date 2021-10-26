@@ -51,6 +51,7 @@ async def test_get_accounts(aresponses, authentication_response, user_response):
     aresponses.assert_plan_strictly_followed()
 
 
+@freeze_time("2021-10-01")
 @pytest.mark.asyncio
 async def test_get_next_pickup_event(
     aresponses,
