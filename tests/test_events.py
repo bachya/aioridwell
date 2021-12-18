@@ -7,7 +7,7 @@ import pytest
 
 from aioridwell import async_get_client
 from aioridwell.errors import RidwellError
-from aioridwell.model import EventState
+from aioridwell.model import EventState, PickupCategory
 
 
 @pytest.mark.asyncio
@@ -104,19 +104,19 @@ async def test_get_next_pickup_event(
         assert pickup_event.pickups[0].priority == 1
         assert pickup_event.pickups[0].product_id == "pickupProduct1"
         assert pickup_event.pickups[0].quantity == 1
-        assert pickup_event.pickups[0].category == "standard"
+        assert pickup_event.pickups[0].category == PickupCategory.STANDARD
         assert pickup_event.pickups[1].name == "Beyond the Bin"
         assert pickup_event.pickups[1].offer_id == "pickupOffer2"
         assert pickup_event.pickups[1].priority == 1
         assert pickup_event.pickups[1].product_id == "pickupProduct2"
         assert pickup_event.pickups[1].quantity == 2
-        assert pickup_event.pickups[1].category == "add_on"
+        assert pickup_event.pickups[1].category == PickupCategory.ADD_ON
         assert pickup_event.pickups[2].name == "Chocolate"
         assert pickup_event.pickups[2].offer_id == "pickupOffer3"
         assert pickup_event.pickups[2].priority == 2
         assert pickup_event.pickups[2].product_id == "pickupProduct3"
         assert pickup_event.pickups[2].quantity == 1
-        assert pickup_event.pickups[2].category == "rotating"
+        assert pickup_event.pickups[2].category == PickupCategory.ROTATING
 
     aresponses.assert_plan_strictly_followed()
 
@@ -223,19 +223,19 @@ async def test_get_pickup_events(
         assert pickup_events[0].pickups[0].priority == 1
         assert pickup_events[0].pickups[0].product_id == "pickupProduct1"
         assert pickup_events[0].pickups[0].quantity == 1
-        assert pickup_events[0].pickups[0].category == "standard"
+        assert pickup_events[0].pickups[0].category == PickupCategory.STANDARD
         assert pickup_events[0].pickups[1].name == "Beyond the Bin"
         assert pickup_events[0].pickups[1].offer_id == "pickupOffer2"
         assert pickup_events[0].pickups[1].priority == 1
         assert pickup_events[0].pickups[1].product_id == "pickupProduct2"
         assert pickup_events[0].pickups[1].quantity == 2
-        assert pickup_events[0].pickups[1].category == "add_on"
+        assert pickup_events[0].pickups[1].category == PickupCategory.ADD_ON
         assert pickup_events[0].pickups[2].name == "Chocolate"
         assert pickup_events[0].pickups[2].offer_id == "pickupOffer3"
         assert pickup_events[0].pickups[2].priority == 2
         assert pickup_events[0].pickups[2].product_id == "pickupProduct3"
         assert pickup_events[0].pickups[2].quantity == 1
-        assert pickup_events[0].pickups[2].category == "rotating"
+        assert pickup_events[0].pickups[2].category == PickupCategory.ROTATING
 
     aresponses.assert_plan_strictly_followed()
 

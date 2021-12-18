@@ -16,10 +16,6 @@ from .query import (
     QUERY_UPDATE_SUBSCRIPTION_PICKUP,
 )
 
-CATEGORY_ADD_ON = "add_on"
-CATEGORY_ROTATING = "rotating"
-CATEGORY_STANDARD = "standard"
-
 PICKUP_TYPES_ADD_ON = [
     "Beyond the Bin",
     "Fluorescent Light Tubes",
@@ -60,6 +56,14 @@ def convert_pickup_event_state(state: str) -> EventState:
     except KeyError:
         LOGGER.warning("Unknown pickup event state: %s", state)
         return EventState.UNKNOWN
+
+
+class PickupCategory(Enum):
+    """Define a representation of a pickup category."""
+
+    ADD_ON = 1
+    ROTATING = 2
+    STANDARD = 3
 
 
 @dataclass(frozen=True)
@@ -134,11 +138,11 @@ class RidwellPickup:
     def __post_init__(self) -> None:
         """Perform some post-init init."""
         if self.name in PICKUP_TYPES_ADD_ON:
-            category = CATEGORY_ADD_ON
+            category = PickupCategory.ADD_ON
         elif self.name in PICKUP_TYPES_STANDARD:
-            category = CATEGORY_STANDARD
+            category = PickupCategory.STANDARD
         else:
-            category = CATEGORY_ROTATING
+            category = PickupCategory.ROTATING
         object.__setattr__(self, "category", category)
 
 
