@@ -16,19 +16,26 @@ from .query import (
     QUERY_UPDATE_SUBSCRIPTION_PICKUP,
 )
 
-PICKUP_TYPES_ADD_ON = [
-    "Beyond the Bin",
-    "Fluorescent Light Tubes",
-    "Latex Paint",
-    "Paint",
-    "Styrofoam",
-]
-PICKUP_TYPES_STANDARD = [
-    "Batteries",
-    "Light Bulbs",
-    "Plastic Film",
-    "Threads",
-]
+
+class PickupCategory(Enum):
+    """Define a representation of a pickup category."""
+
+    ADD_ON = 1
+    ROTATING = 2
+    STANDARD = 3
+
+
+PICKUP_CATEGORIES_MAP = {
+    "Beyond the Bin": PickupCategory.ADD_ON,
+    "Fluorescent Light Tubes": PickupCategory.ADD_ON,
+    "Latex Paint": PickupCategory.ADD_ON,
+    "Paint": PickupCategory.ADD_ON,
+    "Styrofoam": PickupCategory.ADD_ON,
+    "Batteries": PickupCategory.STANDARD,
+    "Light Bulbs": PickupCategory.STANDARD,
+    "Plastic Film": PickupCategory.STANDARD,
+    "Threads": PickupCategory.STANDARD,
+}
 
 
 class AddressType(TypedDict):
@@ -56,14 +63,6 @@ def convert_pickup_event_state(state: str) -> EventState:
     except KeyError:
         LOGGER.warning("Unknown pickup event state: %s", state)
         return EventState.UNKNOWN
-
-
-class PickupCategory(Enum):
-    """Define a representation of a pickup category."""
-
-    ADD_ON = 1
-    ROTATING = 2
-    STANDARD = 3
 
 
 @dataclass(frozen=True)
@@ -137,13 +136,11 @@ class RidwellPickup:
 
     def __post_init__(self) -> None:
         """Perform some post-init init."""
-        if self.name in PICKUP_TYPES_ADD_ON:
-            category = PickupCategory.ADD_ON
-        elif self.name in PICKUP_TYPES_STANDARD:
-            category = PickupCategory.STANDARD
-        else:
-            category = PickupCategory.ROTATING
-        object.__setattr__(self, "category", category)
+        object.__setattr__(
+            self,
+            "category",
+            PICKUP_CATEGORIES_MAP.get(self.name, PickupCategory.ROTATING),
+        )
 
 
 @dataclass(frozen=True)
