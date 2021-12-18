@@ -20,9 +20,9 @@ from .query import (
 class PickupCategory(Enum):
     """Define a representation of a pickup category."""
 
-    ADD_ON = 1
-    ROTATING = 2
-    STANDARD = 3
+    ADD_ON = "add_on"
+    ROTATING = "rotating"
+    STANDARD = "standard"
 
 
 PICKUP_CATEGORIES_MAP = {
@@ -50,17 +50,17 @@ class AddressType(TypedDict):
 class EventState(Enum):
     """Define a representation of an event state."""
 
-    SCHEDULED = 1
-    SKIPPED = 2
-    INITIALIZED = 3
-    UNKNOWN = 99
+    INITIALIZED = "initialized"
+    SCHEDULED = "scheduled"
+    SKIPPED = "skipped"
+    UNKNOWN = "unknown"
 
 
 def convert_pickup_event_state(state: str) -> EventState:
     """Convert a raw pickup event state string into an EventState."""
     try:
-        return EventState[state.upper()]
-    except KeyError:
+        return EventState(state)
+    except ValueError:
         LOGGER.warning("Unknown pickup event state: %s", state)
         return EventState.UNKNOWN
 
@@ -167,15 +167,13 @@ class RidwellPickupEvent:
 
     async def _async_opt(self, state: EventState) -> None:
         """Define a helper to opt in/out to/from the pickup event."""
-        raw_state = state.name.lower()
-
         data = await self._async_request(
             json={
                 "operationName": "updateSubscriptionPickup",
                 "variables": {
                     "input": {
                         "subscriptionPickupId": self.event_id,
-                        "state": raw_state,
+                        "state": state.value,
                     }
                 },
                 "query": QUERY_UPDATE_SUBSCRIPTION_PICKUP,
