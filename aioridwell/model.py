@@ -168,7 +168,7 @@ class RidwellPickupEvent:
 
         new = data["data"]["updateSubscriptionPickup"]["subscriptionPickup"]["state"]
         if new != raw_state:
-            LOGGER.warning("Ridwell returned unknown pickup event state: %s")
+            LOGGER.warning("Ridwell returned unknown pickup event state: %s", new)
             self.state = EventState.UNKNOWN
             return
 
