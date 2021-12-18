@@ -49,13 +49,17 @@ class EventState(Enum):
 
     SCHEDULED = 1
     SKIPPED = 2
+    INITIALIZED = 3
     UNKNOWN = 99
 
 
-EVENT_STRING_TO_STATE = {
-    "scheduled": EventState.SCHEDULED,
-    "skipped": EventState.SKIPPED,
-}
+def convert_pickup_event_state(state: str) -> EventState:
+    """Convert a raw pickup event state string into an EventState."""
+    try:
+        return EventState[state.upper()]
+    except KeyError:
+        LOGGER.warning("Unknown pickup event state: %s", state)
+        return EventState.UNKNOWN
 
 
 @dataclass(frozen=True)
@@ -109,7 +113,7 @@ class RidwellAccount:  # pylint: disable=too-many-instance-attributes
                     )
                     for pickup in event_data["pickupProductSelections"]
                 ],
-                event_data["state"],
+                convert_pickup_event_state(event_data["state"]),
             )
             for event_data in resp["data"]["upcomingSubscriptionPickups"]
         ]
@@ -166,13 +170,9 @@ class RidwellPickupEvent:
             },
         )
 
-        new = data["data"]["updateSubscriptionPickup"]["subscriptionPickup"]["state"]
-        if new != raw_state:
-            LOGGER.warning("Ridwell returned unknown pickup event state: %s", new)
-            self.state = EventState.UNKNOWN
-            return
-
-        self.state = state
+        self.state = convert_pickup_event_state(
+            data["data"]["updateSubscriptionPickup"]["subscriptionPickup"]["state"]
+        )
 
     async def async_get_estimated_cost(self) -> float:
         """Get the estimated cost (USD) of this pickup based on its pickup types."""

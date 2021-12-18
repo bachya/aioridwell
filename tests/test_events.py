@@ -96,7 +96,7 @@ async def test_get_next_pickup_event(
 
         pickup_event = await account.async_get_next_pickup_event()
         assert pickup_event.pickup_date == date(2021, 10, 13)
-        assert pickup_event.state == "scheduled"
+        assert pickup_event.state == EventState.SCHEDULED
 
         assert len(pickup_event.pickups) == 3
         assert pickup_event.pickups[0].name == "Threads"
@@ -213,9 +213,9 @@ async def test_get_pickup_events(
         pickup_events = await account.async_get_pickup_events()
         assert len(pickup_events) == 2
         assert pickup_events[0].pickup_date == date(2021, 10, 13)
-        assert pickup_events[0].state == "scheduled"
+        assert pickup_events[0].state == EventState.SCHEDULED
         assert pickup_events[1].pickup_date == date(2021, 10, 27)
-        assert pickup_events[1].state == "initialized"
+        assert pickup_events[1].state == EventState.INITIALIZED
 
         assert len(pickup_events[0].pickups) == 3
         assert pickup_events[0].pickups[0].name == "Threads"
@@ -390,7 +390,7 @@ async def test_opt_in(
 
         await pickup_events[0].async_opt_in()
         assert any(
-            "unknown pickup event state: fake_state" in e.message
+            "Unknown pickup event state: fake_state" in e.message
             for e in caplog.records
         )
         assert pickup_events[0].state == EventState.UNKNOWN
