@@ -7,6 +7,7 @@ import pytest
 
 from aioridwell import async_get_client
 from aioridwell.errors import RidwellError
+from aioridwell.model import EventState
 
 
 @pytest.mark.asyncio
@@ -297,5 +298,98 @@ async def test_get_pickup_events_cost(
 
         event_2_cost = await pickup_events[1].async_get_estimated_cost()
         assert event_2_cost == 0.00
+
+    aresponses.assert_plan_strictly_followed()
+
+
+@pytest.mark.asyncio
+async def test_opt_in(
+    aresponses,
+    authentication_response,
+    caplog,
+    upcoming_subscription_pickups_response,
+    update_subscription_pickup_response,
+    user_response,
+):
+    """Test opting in/out of a pickup."""
+    aresponses.add(
+        "api.ridwell.com",
+        "/",
+        "post",
+        response=aiohttp.web_response.json_response(
+            authentication_response, status=200
+        ),
+    )
+    aresponses.add(
+        "api.ridwell.com",
+        "/",
+        "post",
+        response=aiohttp.web_response.json_response(user_response, status=200),
+    )
+    aresponses.add(
+        "api.ridwell.com",
+        "/",
+        "post",
+        response=aiohttp.web_response.json_response(
+            upcoming_subscription_pickups_response, status=200
+        ),
+    )
+    aresponses.add(
+        "api.ridwell.com",
+        "/",
+        "post",
+        response=aiohttp.web_response.json_response(
+            update_subscription_pickup_response, status=200
+        ),
+    )
+
+    update_subscription_pickup_response["data"]["updateSubscriptionPickup"][
+        "subscriptionPickup"
+    ]["state"] = "skipped"
+
+    aresponses.add(
+        "api.ridwell.com",
+        "/",
+        "post",
+        response=aiohttp.web_response.json_response(
+            update_subscription_pickup_response, status=200
+        ),
+    )
+
+    update_subscription_pickup_response["data"]["updateSubscriptionPickup"][
+        "subscriptionPickup"
+    ]["state"] = "fake_state"
+
+    aresponses.add(
+        "api.ridwell.com",
+        "/",
+        "post",
+        response=aiohttp.web_response.json_response(
+            update_subscription_pickup_response, status=200
+        ),
+    )
+
+    async with aiohttp.ClientSession() as session:
+        client = await async_get_client("user", "password", session=session)
+        assert client.user_id == "userId1"
+
+        accounts = await client.async_get_accounts()
+        assert len(accounts) == 1
+
+        account = accounts["accountId1"]
+        assert account.account_id == "accountId1"
+
+        pickup_events = await account.async_get_pickup_events()
+        assert len(pickup_events) == 2
+
+        await pickup_events[0].async_opt_in()
+        assert pickup_events[0].state == EventState.SCHEDULED
+
+        await pickup_events[0].async_opt_out()
+        assert pickup_events[0].state == EventState.SKIPPED
+
+        await pickup_events[0].async_opt_in()
+        assert any("unknown pickup event state" in e.message for e in caplog.records)
+        assert pickup_events[0].state == EventState.UNKNOWN
 
     aresponses.assert_plan_strictly_followed()

@@ -1,0 +1,12 @@
+{
+  "data": {
+    "updateSubscriptionPickup": {
+      "subscriptionPickup": {
+        "id": "pickup1",
+        "type": "core",
+        "state": "scheduled",
+        "pickupOn": "2021-12-22"
+      }
+    }
+  }
+}

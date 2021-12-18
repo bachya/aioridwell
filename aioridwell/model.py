@@ -3,10 +3,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date, datetime
+from enum import Enum
 from typing import Callable, Literal, TypedDict, cast
 
 from titlecase import titlecase
 
+from .const import LOGGER
 from .errors import RidwellError
 from .query import (
     QUERY_SUBSCRIPTION_PICKUP_QUOTE,
@@ -40,6 +42,20 @@ class AddressType(TypedDict):
     city: str
     state: str
     postal_code: str
+
+
+class EventState(Enum):
+    """Define a representation of an event state."""
+
+    SCHEDULED = 1
+    SKIPPED = 2
+    UNKNOWN = 99
+
+
+EVENT_STRING_TO_STATE = {
+    "scheduled": EventState.SCHEDULED,
+    "skipped": EventState.SKIPPED,
+}
 
 
 @dataclass(frozen=True)
@@ -122,7 +138,7 @@ class RidwellPickup:
         object.__setattr__(self, "category", category)
 
 
-@dataclass(frozen=True)
+@dataclass()
 class RidwellPickupEvent:
     """Define a Ridwell pickup event."""
 
@@ -131,7 +147,32 @@ class RidwellPickupEvent:
     event_id: str
     pickup_date: date
     pickups: list[RidwellPickup]
-    state: Literal["initialized", "scheduled"]
+    state: EventState
+
+    async def _async_opt(self, state: EventState) -> None:
+        """Define a helper to opt in/out to/from the pickup event."""
+        raw_state = state.name.lower()
+
+        data = await self._async_request(
+            json={
+                "operationName": "updateSubscriptionPickup",
+                "variables": {
+                    "input": {
+                        "subscriptionPickupId": self.event_id,
+                        "state": raw_state,
+                    }
+                },
+                "query": QUERY_UPDATE_SUBSCRIPTION_PICKUP,
+            },
+        )
+
+        new = data["data"]["updateSubscriptionPickup"]["subscriptionPickup"]["state"]
+        if new != raw_state:
+            LOGGER.warning("Ridwell returned unknown pickup event state: %s")
+            self.state = EventState.UNKNOWN
+            return
+
+        self.state = state
 
     async def async_get_estimated_cost(self) -> float:
         """Get the estimated cost (USD) of this pickup based on its pickup types."""
@@ -162,30 +203,8 @@ class RidwellPickupEvent:
 
     async def async_opt_in(self) -> None:
         """Opt in to the pickup event."""
-        await self._async_request(
-            json={
-                "operationName": "updateSubscriptionPickup",
-                "variables": {
-                    "input": {
-                        "subscriptionPickupId": self.event_id,
-                        "state": "scheduled",
-                    }
-                },
-                "query": QUERY_UPDATE_SUBSCRIPTION_PICKUP,
-            },
-        )
+        await self._async_opt(EventState.SCHEDULED)
 
     async def async_opt_out(self) -> None:
         """Opt out from the pickup event."""
-        await self._async_request(
-            json={
-                "operationName": "updateSubscriptionPickup",
-                "variables": {
-                    "input": {
-                        "subscriptionPickupId": self.event_id,
-                        "state": "skipped",
-                    }
-                },
-                "query": QUERY_UPDATE_SUBSCRIPTION_PICKUP,
-            },
-        )
+        await self._async_opt(EventState.SKIPPED)
