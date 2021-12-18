@@ -146,7 +146,7 @@ class RidwellPickup:
         object.__setattr__(self, "category", category)
 
 
-@dataclass()
+@dataclass(frozen=True)
 class RidwellPickupEvent:
     """Define a Ridwell pickup event."""
 
@@ -174,8 +174,12 @@ class RidwellPickupEvent:
             },
         )
 
-        self.state = convert_pickup_event_state(
-            data["data"]["updateSubscriptionPickup"]["subscriptionPickup"]["state"]
+        object.__setattr__(
+            self,
+            "state",
+            convert_pickup_event_state(
+                data["data"]["updateSubscriptionPickup"]["subscriptionPickup"]["state"]
+            ),
         )
 
     async def async_get_estimated_cost(self) -> float:
