@@ -389,7 +389,10 @@ async def test_opt_in(
         assert pickup_events[0].state == EventState.SKIPPED
 
         await pickup_events[0].async_opt_in()
-        assert any("unknown pickup event state" in e.message for e in caplog.records)
+        assert any(
+            "unknown pickup event state: fake_state" in e.message
+            for e in caplog.records
+        )
         assert pickup_events[0].state == EventState.UNKNOWN
 
     aresponses.assert_plan_strictly_followed()
