@@ -180,6 +180,8 @@ async def main() -> None:
     accounts = await client.async_get_accounts()
     for account in accounts.values():
         events = await account.async_get_pickup_events()
+        # >>> [RidwellPickupEvent(...), ...]
+
         event_1_cost = await events[0].async_get_estimated_cost()
         # >>> 22.00
 
