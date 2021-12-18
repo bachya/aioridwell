@@ -26,14 +26,14 @@ class PickupCategory(Enum):
 
 
 PICKUP_CATEGORIES_MAP = {
+    "Batteries": PickupCategory.STANDARD,
     "Beyond the Bin": PickupCategory.ADD_ON,
     "Fluorescent Light Tubes": PickupCategory.ADD_ON,
     "Latex Paint": PickupCategory.ADD_ON,
-    "Paint": PickupCategory.ADD_ON,
-    "Styrofoam": PickupCategory.ADD_ON,
-    "Batteries": PickupCategory.STANDARD,
     "Light Bulbs": PickupCategory.STANDARD,
+    "Paint": PickupCategory.ADD_ON,
     "Plastic Film": PickupCategory.STANDARD,
+    "Styrofoam": PickupCategory.ADD_ON,
     "Threads": PickupCategory.STANDARD,
 }
 
