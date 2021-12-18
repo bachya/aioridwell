@@ -36,6 +36,12 @@ def upcoming_subscription_pickups_response_fixture():
     return json.loads(load_fixture("upcoming_subscription_pickups_response.json"))
 
 
+@pytest.fixture(name="update_subscription_pickup_response", scope="session")
+def update_subscription_pickup_response_fixture():
+    """Define a fixture to return a response to opt in to a pickup event."""
+    return json.loads(load_fixture("update_subscription_pickup_response.json"))
+
+
 @pytest.fixture(name="user_response", scope="session")
 def user_response_fixture():
     """Define a fixture to return an user info response."""

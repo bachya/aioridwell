@@ -62,3 +62,16 @@ query upcomingSubscriptionPickups($subscriptionId: ID!) {
   }
 }
 """
+
+QUERY_UPDATE_SUBSCRIPTION_PICKUP = """
+mutation updateSubscriptionPickup($input: UpdateSubscriptionPickupInput!) {
+  updateSubscriptionPickup(input: $input) {
+    subscriptionPickup {
+      id
+      type
+      state
+      pickupOn
+    }
+  }
+}
+"""
