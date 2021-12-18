@@ -136,7 +136,7 @@ The `RidwellPickupEvent` object comes with some useful properties:
 
 Likewise, the `RidwellPickup` object comes with some useful properties:
 
-* `category`: the category of the pickup (`standard`, `rotating`, or `add_on`)
+* `category`: a `PickupCategory` enum whose name represents the type of pickup
 * `name`: the name of the item being picked up
 * `offer_id`: the Ridwell ID for this particular offer
 * `priority`: the pickup priority
