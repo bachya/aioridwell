@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from enum import Enum
-from typing import Callable, Literal, TypedDict, cast
+from typing import Callable, TypedDict, cast
 
 from titlecase import titlecase
 
@@ -132,7 +132,7 @@ class RidwellPickup:
     product_id: str
     quantity: int
 
-    category: Literal["add_on", "rotating", "standard"] = field(init=False)
+    category: PickupCategory = field(init=False)
 
     def __post_init__(self) -> None:
         """Perform some post-init init."""
