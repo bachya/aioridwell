@@ -27,7 +27,7 @@ pip install aioridwell
 `aioridwell` is currently supported on:
 
 * Python 3.8
-* Python 3.9 
+* Python 3.9
 * Python 3.10
 
 # Usage
@@ -143,9 +143,30 @@ Likewise, the `RidwellPickup` object comes with some useful properties:
 * `product_id`: the Ridwell ID for this particular product
 * `quantity`: the amount of the product being picked up
 
-### Calculating a Pickup Event's Esimated Cost
+### Opting Into or Out Of a Pickup Event
 
-Calculating the estimated cost of a pickup event is, you guessed it, easy:
+```python
+import asyncio
+
+from aioridwell import async_get_client
+
+
+async def main() -> None:
+    client = await async_get_client("<EMAIL>", "<PASSWORD>")
+
+    accounts = await client.async_get_accounts()
+    for account in accounts.values():
+        events = await account.async_get_pickup_events()
+        # >>> [RidwellPickupEvent(...), ...]
+
+        await events[0].async_opt_in()
+        await events[0].async_opt_out()
+
+
+asyncio.run(main())
+```
+
+### Calculating a Pickup Event's Esimated Cost
 
 ```python
 import asyncio
