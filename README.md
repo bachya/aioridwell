@@ -132,7 +132,7 @@ The `RidwellPickupEvent` object comes with some useful properties:
 
 * `pickup_date`: the date of the pickup (in `datetime.date` format)
 * `pickups`: a list of `RidwellPickup` objects
-* `state`: either `initialized` (not scheduled for pickup) or `scheduled`
+* `state`: an `EventState` enum whose name represents the current state of the pickup event
 
 Likewise, the `RidwellPickup` object comes with some useful properties:
 
