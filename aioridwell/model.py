@@ -136,6 +136,17 @@ class RidwellPickup:
 
     def __post_init__(self) -> None:
         """Perform some post-init init."""
+        category = PICKUP_CATEGORIES_MAP.get(self.name, PickupCategory.ROTATING)
+
+        if category == PickupCategory.ROTATING:
+            # Since our method of detecting rotating pickups is pretty "loose" (i.e.,
+            # if a category isn't a known standard or add-on, we assume it's rotating).
+            # This could lead to future issues if Ridwell introduces a new standard
+            # or add-on type that isn't mapped here. We try to be unintrusive and
+            # merely log that we've found a "rotating" pickup so that it can later tell
+            # the full story:
+            LOGGER.info("Detected assumed rotating pickup: %s", self.name)
+
         object.__setattr__(
             self,
             "category",

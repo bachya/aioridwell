@@ -1,5 +1,6 @@
 """Define tests for the client."""
 from datetime import date
+import logging
 
 import aiohttp
 from freezegun import freeze_time
@@ -57,10 +58,13 @@ async def test_get_accounts(aresponses, authentication_response, user_response):
 async def test_get_next_pickup_event(
     aresponses,
     authentication_response,
+    caplog,
     upcoming_subscription_pickups_response,
     user_response,
 ):
     """Test getting the next upcoming pickup event associated with an account."""
+    caplog.set_level(logging.DEBUG)
+
     aresponses.add(
         "api.ridwell.com",
         "/",
@@ -117,6 +121,11 @@ async def test_get_next_pickup_event(
         assert pickup_event.pickups[2].product_id == "pickupProduct3"
         assert pickup_event.pickups[2].quantity == 1
         assert pickup_event.pickups[2].category == PickupCategory.ROTATING
+
+        assert any(
+            "Detected assumed rotating pickup: Chocolate" in e.message
+            for e in caplog.records
+        )
 
     aresponses.assert_plan_strictly_followed()
 
