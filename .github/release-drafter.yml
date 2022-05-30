@@ -11,9 +11,9 @@ categories:
       - "bug"
   - title: "🧰 Maintenance"
     labels:
-      - "ci/cd"
       - "dependencies"
       - "maintenance"
+      - "security fix"
       - "tooling"
 change-template: "- $TITLE (#$NUMBER)"
 name-template: "$NEXT_PATCH_VERSION"
