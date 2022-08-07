@@ -3,8 +3,8 @@
 [![CI](https://github.com/bachya/aioridwell/workflows/CI/badge.svg)](https://github.com/bachya/aioridwell/actions)
 [![PyPi](https://img.shields.io/pypi/v/aioridwell.svg)](https://pypi.python.org/pypi/aioridwell)
 [![Version](https://img.shields.io/pypi/pyversions/aioridwell.svg)](https://pypi.python.org/pypi/aioridwell)
-[![License](https://img.shields.io/pypi/l/aioridwell.svg)](https://github.com/bachya/aioridwell/blob/master/LICENSE)
-[![Code Coverage](https://codecov.io/gh/bachya/aioridwell/branch/master/graph/badge.svg)](https://codecov.io/gh/bachya/aioridwell)
+[![License](https://img.shields.io/pypi/l/aioridwell.svg)](https://github.com/bachya/aioridwell/blob/main/LICENSE)
+[![Code Coverage](https://codecov.io/gh/bachya/aioridwell/branch/main/graph/badge.svg)](https://codecov.io/gh/bachya/aioridwell)
 [![Maintainability](https://api.codeclimate.com/v1/badges/9c1dcc1c991cecb06eda/maintainability)](https://codeclimate.com/github/bachya/aioridwell/maintainability)
 [![Say Thanks](https://img.shields.io/badge/SayThanks-!-1EAEDB.svg)](https://saythanks.io/to/bachya)
 
