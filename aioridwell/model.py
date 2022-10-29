@@ -1,10 +1,11 @@
 """Define data models for various Ridwell objects."""
 from __future__ import annotations
 
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from enum import Enum
-from typing import Callable, TypedDict, cast
+from typing import Any, TypedDict, cast
 
 from titlecase import titlecase
 
@@ -57,7 +58,14 @@ class EventState(Enum):
 
 
 def convert_pickup_event_state(state: str) -> EventState:
-    """Convert a raw pickup event state string into an EventState."""
+    """Convert a raw pickup event state string into an EventState.
+
+    Args:
+        state: A raw event state.
+
+    Returns:
+        A parsed EventState object.
+    """
     try:
         return EventState(state)
     except ValueError:
@@ -66,10 +74,10 @@ def convert_pickup_event_state(state: str) -> EventState:
 
 
 @dataclass(frozen=True)
-class RidwellAccount:  # pylint: disable=too-many-instance-attributes
+class RidwellAccount:
     """Define a Ridwell account."""
 
-    _async_request: Callable = field(compare=False)
+    _async_request: Callable[..., Awaitable[dict[str, Any]]] = field(compare=False)
 
     account_id: str
     address: AddressType
@@ -80,7 +88,14 @@ class RidwellAccount:  # pylint: disable=too-many-instance-attributes
     subscription_active: bool
 
     async def async_get_next_pickup_event(self) -> RidwellPickupEvent:
-        """Get the next pickup event based on today's date."""
+        """Get the next pickup event based on today's date.
+
+        Returns:
+            A RidwellPickupEvent object.
+
+        Raises:
+            RidwellError: Raised when no valid pickup events are found.
+        """
         pickup_events = await self.async_get_pickup_events()
         for event in pickup_events:
             if event.pickup_date >= date.today():
@@ -88,7 +103,11 @@ class RidwellAccount:  # pylint: disable=too-many-instance-attributes
         raise RidwellError("No pickup events found after today")
 
     async def async_get_pickup_events(self) -> list[RidwellPickupEvent]:
-        """Get pickup events for this subscription."""
+        """Get pickup events for this subscription.
+
+        Returns:
+            A list of RidwellPickupEvent objects.
+        """
         resp = await self._async_request(
             json={
                 "operationName": "upcomingSubscriptionPickups",
@@ -158,7 +177,7 @@ class RidwellPickup:
 class RidwellPickupEvent:
     """Define a Ridwell pickup event."""
 
-    _async_request: Callable = field(compare=False)
+    _async_request: Callable[..., Awaitable[dict[str, Any]]] = field(compare=False)
 
     event_id: str
     pickup_date: date
@@ -166,7 +185,11 @@ class RidwellPickupEvent:
     state: EventState
 
     async def _async_opt(self, state: EventState) -> None:
-        """Define a helper to opt in/out to/from the pickup event."""
+        """Define a helper to opt in/out to/from the pickup event.
+
+        Args:
+            state: An EventState object denoting the desired state.
+        """
         data = await self._async_request(
             json={
                 "operationName": "updateSubscriptionPickup",
@@ -189,7 +212,11 @@ class RidwellPickupEvent:
         )
 
     async def async_get_estimated_cost(self) -> float:
-        """Get the estimated cost (USD) of this pickup based on its pickup types."""
+        """Get the estimated cost (USD) of this pickup based on its pickup types.
+
+        Returns:
+            A float denoting the estimated cost.
+        """
         if not self.pickups:
             return 0.0
 

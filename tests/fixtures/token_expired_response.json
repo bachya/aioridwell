@@ -8,9 +8,7 @@
           "column": 3
         }
       ],
-      "path": [
-        "user"
-      ],
+      "path": ["user"],
       "extensions": {
         "code": "UNAUTHENTICATED"
       }

@@ -10,7 +10,7 @@ from aioridwell.errors import RidwellError
 _LOGGER = logging.getLogger()
 
 EMAIL = "<EMAIL>"
-PASSWORD = "<PASSWORD>"
+PASSWORD = "<PASSWORD>"  # noqa: S105
 
 
 async def main() -> None:
