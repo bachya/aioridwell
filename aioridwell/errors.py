@@ -35,7 +35,14 @@ DATA_ERROR_MAP = {
 
 
 def raise_for_data_error(data: dict[str, Any]) -> None:
-    """Raise an appropriate error if a message exists in the response data."""
+    """Raise an appropriate error if a message exists in the response data.
+
+    Args:
+        data: An API response payload.
+
+    Raises:
+        exc: A RidwellError subclass.
+    """
     if "errors" not in data:
         return
 

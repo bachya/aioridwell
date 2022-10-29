@@ -1,7 +1,7 @@
 {
-	"data": {
-		"subscriptionPickupQuote": {
-			"totalCents": 2200
-		}
-	}
+  "data": {
+    "subscriptionPickupQuote": {
+      "totalCents": 2200
+    }
+  }
 }

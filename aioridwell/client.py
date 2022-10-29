@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Any, Dict, cast
+from typing import Any
 
-from aiohttp import ClientSession, ClientTimeout
-from aiohttp.client_exceptions import ClientError, ContentTypeError
 import jwt
+from aiohttp import ClientSession, ClientTimeout
+from aiohttp.client_exceptions import ClientError
 
 from .const import LOGGER
 from .errors import (
@@ -26,19 +26,23 @@ DEFAULT_TIMEOUT = 10
 
 
 def decode_jwt(encoded_jwt: str) -> dict[str, Any]:
-    """Decode and return a JWT."""
-    return cast(
-        Dict[str, Any],
-        jwt.decode(
-            encoded_jwt,
-            "secret",
-            algorithms=["HS256"],
-            options={"verify_signature": False},
-        ),
+    """Decode and return a JWT.
+
+    Args:
+        encoded_jwt: An encoded JWT.
+
+    Returns:
+        A decoded JWT.
+    """
+    return jwt.decode(
+        encoded_jwt,
+        "secret",
+        algorithms=["HS256"],
+        options={"verify_signature": False},
     )
 
 
-class Client:  # pylint: disable=too-many-instance-attributes
+class Client:
     """Define the client."""
 
     def __init__(
@@ -54,6 +58,13 @@ class Client:  # pylint: disable=too-many-instance-attributes
 
         Note that this is not intended to be instantiated directly; instead, users
         should use the async_get_client coroutine method.
+
+        Args:
+            email: A Ridwell account email address.
+            password: The password to the Ridwell account.
+            request_retries: The number of times a failed request should be retried.
+            request_retry_delay: The delay (in seconds) between retries.
+            session: An option aiohttp ClientSession.
         """
         self._email = email
         self._password = password
@@ -76,13 +87,17 @@ class Client:  # pylint: disable=too-many-instance-attributes
                 "query": QUERY_AUTH_DATA,
             },
         )
-        self._token = resp["data"]["createAuthentication"]["authenticationToken"]
-        assert self._token
-        token_data = decode_jwt(self._token)
-        self.user_id = token_data["ridwell/userId"]
+        if token := resp["data"]["createAuthentication"]["authenticationToken"]:
+            token_data = decode_jwt(token)
+            self._token = token
+            self.user_id = token_data["ridwell/userId"]
 
     async def async_get_accounts(self) -> dict[str, RidwellAccount]:
-        """Get all accounts for this user."""
+        """Get all accounts for this user.
+
+        Returns:
+            A dictionary of Ridwell account IDs to RidwellAccount objects.
+        """
         resp = await self.async_request(
             json={
                 "operationName": "user",
@@ -107,16 +122,24 @@ class Client:  # pylint: disable=too-many-instance-attributes
         }
 
     async def async_request(self, **kwargs: dict[str, Any]) -> dict[str, Any]:
-        """Make an API request (based on a Ridwell "query string")."""
+        """Make an API request (based on a Ridwell "query string").
+
+        Args:
+            **kwargs: Additional kwargs to send with the request.
+
+        Returns:
+            An API response payload.
+
+        Raises:
+            InvalidCredentialsError: Raised upon invalid Ridwell credentials.
+            RequestError: Raised upon an underlying HTTP error.
+        """
         kwargs.setdefault("headers", {})
 
-        use_running_session = self._session and not self._session.closed
-        if use_running_session:
+        if use_running_session := self._session and not self._session.closed:
             session = self._session
         else:
             session = ClientSession(timeout=ClientTimeout(total=DEFAULT_TIMEOUT))
-
-        assert session
 
         data: dict[str, Any] = {}
         retry = 0
@@ -128,7 +151,7 @@ class Client:  # pylint: disable=too-many-instance-attributes
                 try:
                     data = await resp.json()
                     resp.raise_for_status()
-                except (ClientError, ContentTypeError) as err:
+                except ClientError as err:
                     raise RequestError(err) from err
 
                 # Ridwell's API can return HTTP 200 responses that are still errors, so
@@ -172,7 +195,18 @@ async def async_get_client(
     request_retry_delay: int = DEFAULT_RETRY_DELAY,
     session: ClientSession | None = None,
 ) -> Client:
-    """Get an authenticated client."""
+    """Get an authenticated client.
+
+    Args:
+        email: A Ridwell account email address.
+        password: The password to the Ridwell account.
+        request_retries: The number of times a failed request should be retried.
+        request_retry_delay: The delay (in seconds) between retries.
+        session: An option aiohttp ClientSession.
+
+    Returns:
+        An authenticated Client object.
+    """
     client = Client(
         email,
         password,
