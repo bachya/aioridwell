@@ -55,7 +55,7 @@ class EventState(Enum):
     SCHEDULED = "scheduled"
     SKIPPED = "skipped"
     UNKNOWN = "unknown"
-
+    NOTIFIED = "notified"
 
 def convert_pickup_event_state(state: str) -> EventState:
     """Convert a raw pickup event state string into an EventState.
