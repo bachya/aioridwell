@@ -52,10 +52,11 @@ class EventState(Enum):
     """Define a representation of an event state."""
 
     INITIALIZED = "initialized"
+    NOTIFIED = "notified"
     SCHEDULED = "scheduled"
     SKIPPED = "skipped"
     UNKNOWN = "unknown"
-    NOTIFIED = "notified"
+
 
 def convert_pickup_event_state(state: str) -> EventState:
     """Convert a raw pickup event state string into an EventState.
