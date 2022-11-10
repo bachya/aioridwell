@@ -52,6 +52,7 @@ class EventState(Enum):
     """Define a representation of an event state."""
 
     INITIALIZED = "initialized"
+    NOTIFIED = "notified"
     SCHEDULED = "scheduled"
     SKIPPED = "skipped"
     UNKNOWN = "unknown"
