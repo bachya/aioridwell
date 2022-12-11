@@ -1,17 +1,16 @@
 # ♻️ aioridwell: A Python3, asyncio-based API for interacting with Ridwell
 
-[![CI](https://github.com/bachya/aioridwell/workflows/CI/badge.svg)](https://github.com/bachya/aioridwell/actions)
-[![PyPi](https://img.shields.io/pypi/v/aioridwell.svg)](https://pypi.python.org/pypi/aioridwell)
-[![Version](https://img.shields.io/pypi/pyversions/aioridwell.svg)](https://pypi.python.org/pypi/aioridwell)
-[![License](https://img.shields.io/pypi/l/aioridwell.svg)](https://github.com/bachya/aioridwell/blob/main/LICENSE)
-[![Code Coverage](https://codecov.io/gh/bachya/aioridwell/branch/dev/graph/badge.svg)](https://codecov.io/gh/bachya/aioridwell)
-[![Maintainability](https://api.codeclimate.com/v1/badges/9c1dcc1c991cecb06eda/maintainability)](https://codeclimate.com/github/bachya/aioridwell/maintainability)
-[![Say Thanks](https://img.shields.io/badge/SayThanks-!-1EAEDB.svg)](https://saythanks.io/to/bachya)
+[![CI][ci-badge]][ci]
+[![PyPI][pypi-badge]][pypi]
+[![Version][version-badge]][version]
+[![License][license-badge]][license]
+[![Code Coverage][codecov-badge]][codecov]
+[![Maintainability][maintainability-badge]][maintainability]
 
 <a href="https://www.buymeacoffee.com/bachya1208P" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
 `aioridwell` is a Python 3, asyncio-friendly library for interacting with
-[Ridwell](https://ridwell.com) to view information on upcoming recycling pickups.
+[Ridwell][ridwell] to view information on upcoming recycling pickups.
 
 - [Installation](#installation)
 - [Python Versions](#python-versions)
@@ -53,9 +52,9 @@ asyncio.run(main())
 ```
 
 By default, the library creates a new connection to the API with each coroutine. If
-you are calling a large number of coroutines (or merely want to squeeze out every second of runtime savings possible), an
-[`aiohttp`](https://github.com/aio-libs/aiohttp) `ClientSession` can be used for connection
-pooling:
+you are calling a large number of coroutines (or merely want to squeeze out every second
+of runtime savings possible), an [`aiohttp`][aiohttp] `ClientSession` can be used for
+connection pooling:
 
 ```python
 import asyncio
@@ -193,15 +192,35 @@ asyncio.run(main())
 
 # Contributing
 
-1. [Check for open features/bugs](https://github.com/bachya/aioridwell/issues)
-   or [initiate a discussion on one](https://github.com/bachya/aioridwell/issues/new).
-2. [Fork the repository](https://github.com/bachya/aioridwell/fork).
+Thanks to all of [our contributors][contributors] so far!
+
+1. [Check for open features/bugs][issues] or [initiate a discussion on one][new-issue].
+2. [Fork the repository][fork].
 3. (_optional, but highly recommended_) Create a virtual environment: `python3 -m venv .venv`
 4. (_optional, but highly recommended_) Enter the virtual environment: `source ./.venv/bin/activate`
 5. Install the dev environment: `script/setup`
-6. Code your new feature or bug fix.
+6. Code your new feature or bug fix on a new branch.
 7. Write tests that cover your new functionality.
 8. Run tests and ensure 100% code coverage: `poetry run pytest --cov aioridwell tests`
 9. Update `README.md` with any new documentation.
-10. Add yourself to `AUTHORS.md`.
-11. Submit a pull request!
+10. Submit a pull request!
+
+[aiohttp]: https://github.com/aio-libs/aiohttp
+[ci-badge]: https://github.com/bachya/aioridwell/workflows/CI/badge.svg
+[ci]: https://github.com/bachya/aioridwell/actions
+[codecov-badge]: https://codecov.io/gh/bachya/aioridwell/branch/dev/graph/badge.svg
+[codecov]: https://codecov.io/gh/bachya/aioridwell
+[contributors]: https://github.com/bachya/aioridwell/graphs/contributors
+[fork]: https://github.com/bachya/aioridwell/fork
+[issues]: https://github.com/bachya/aioridwell/issues
+[license-badge]: https://img.shields.io/pypi/l/aioridwell.svg
+[license]: https://github.com/bachya/aioridwell/blob/main/LICENSE
+[maintainability-badge]: https://api.codeclimate.com/v1/badges/a03c9e96f19a3dc37f98/maintainability
+[maintainability]: https://codeclimate.com/github/bachya/aioridwell/maintainability
+[new-issue]: https://github.com/bachya/aioridwell/issues/new
+[new-issue]: https://github.com/bachya/aioridwell/issues/new
+[pypi-badge]: https://img.shields.io/pypi/v/aioridwell.svg
+[pypi]: https://pypi.python.org/pypi/aioridwell
+[ridwell]: https://ridwell.com
+[version-badge]: https://img.shields.io/pypi/pyversions/aioridwell.svg
+[version]: https://pypi.python.org/pypi/aioridwell
