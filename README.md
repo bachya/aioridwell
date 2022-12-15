@@ -215,7 +215,7 @@ Thanks to all of [our contributors][contributors] so far!
 [issues]: https://github.com/bachya/aioridwell/issues
 [license-badge]: https://img.shields.io/pypi/l/aioridwell.svg
 [license]: https://github.com/bachya/aioridwell/blob/main/LICENSE
-[maintainability-badge]: https://api.codeclimate.com/v1/badges/a03c9e96f19a3dc37f98/maintainability
+[maintainability-badge]: https://api.codeclimate.com/v1/badges/9c1dcc1c991cecb06eda/maintainability
 [maintainability]: https://codeclimate.com/github/bachya/aioridwell/maintainability
 [new-issue]: https://github.com/bachya/aioridwell/issues/new
 [new-issue]: https://github.com/bachya/aioridwell/issues/new
