@@ -15,6 +15,21 @@ from .common import generate_jwt
 
 
 @pytest.mark.asyncio
+async def test_dashboard_url(
+    authenticated_ridwell_api_server: ResponsesMockServer,
+) -> None:
+    """Test getting the dashboard URL for a user.
+
+    Args:
+        authenticated_ridwell_api_server: A mocked authenticated Ridwell API server.
+    """
+    async with authenticated_ridwell_api_server:
+        client = await async_get_client("user", "password")
+        url = client.get_dashboard_url()
+        assert url == "https://www.ridwell.com/users/userId1/dashboard"
+
+
+@pytest.mark.asyncio
 async def test_expired_token_successful(
     aresponses: ResponsesMockServer,
     authenticated_ridwell_api_server: ResponsesMockServer,
