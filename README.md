@@ -73,6 +73,23 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
+## Getting the User's Dashboard URL
+
+```python
+import asyncio
+
+from aioridwell import async_get_client
+
+
+async def main() -> None:
+    client = await async_get_client("<EMAIL>", "<PASSWORD>")
+    client.get_dashboard_url()
+    # >>> https://www.ridwell.com/users/userId1/dashboard
+
+
+asyncio.run(main())
+```
+
 ## Getting Accounts
 
 Getting all accounts associated with this email address is easy:
