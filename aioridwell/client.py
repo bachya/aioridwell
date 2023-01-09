@@ -186,6 +186,14 @@ class Client:
 
         return data
 
+    def get_dashboard_url(self) -> str:
+        """Get the dashboard URL for this user.
+
+        Returns:
+            A URL string.
+        """
+        return f"https://www.ridwell.com/users/{self.user_id}/dashboard"
+
 
 async def async_get_client(
     email: str,
