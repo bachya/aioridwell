@@ -68,7 +68,7 @@ titlecase = "^2.3"
 [tool.poetry.group.dev.dependencies]
 aresponses = "^2.1.6"
 bandit = "^1.7.4"
-black = "^22.10.0"
+black = ">=22.10,<24.0"
 blacken-docs = "^1.12.1"
 codespell = "^2.2.2"
 coverage = {version = "^6.5", extras = ["toml"]}
