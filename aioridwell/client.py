@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Any
+from typing import Any, cast
 
 import jwt
 from aiohttp import ClientSession, ClientTimeout
@@ -34,11 +34,14 @@ def decode_jwt(encoded_jwt: str) -> dict[str, Any]:
     Returns:
         A decoded JWT.
     """
-    return jwt.decode(
-        encoded_jwt,
-        "secret",
-        algorithms=["HS256"],
-        options={"verify_signature": False},
+    return cast(
+        dict[str, Any],
+        jwt.decode(
+            encoded_jwt,
+            "secret",
+            algorithms=["HS256"],
+            options={"verify_signature": False},
+        ),
     )
 
 
