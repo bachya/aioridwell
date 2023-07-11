@@ -32,6 +32,7 @@ PICKUP_CATEGORIES_MAP = {
     "Fluorescent Light Tubes": PickupCategory.ADD_ON,
     "Latex Paint": PickupCategory.ADD_ON,
     "Light Bulbs": PickupCategory.STANDARD,
+    "Multi-Layer Plastic": PickupCategory.STANDARD,
     "Paint": PickupCategory.ADD_ON,
     "Plastic Film": PickupCategory.STANDARD,
     "Styrofoam": PickupCategory.ADD_ON,
