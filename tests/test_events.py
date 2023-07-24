@@ -405,7 +405,8 @@ async def test_opt_in(  # pylint: disable=too-many-arguments
             assert pickup_events[0].state == EventState.SCHEDULED
 
             await pickup_events[0].async_opt_out()
-            assert pickup_events[0].state == EventState.SKIPPED
+            new_state = pickup_events[0].state
+            assert new_state == EventState.SKIPPED
 
             await pickup_events[0].async_opt_in()
             assert any(
