@@ -64,7 +64,6 @@ aiohttp = ">=3.8.0"
 certifi = ">=2023.07.22"
 python = "^3.9.0"
 pytz = ">=2021.3"
-setuptools = ">=65.5.1"
 titlecase = "^2.3"
 
 [tool.poetry.group.dev.dependencies]
