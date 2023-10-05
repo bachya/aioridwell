@@ -48,7 +48,7 @@ def decode_jwt(encoded_jwt: str) -> dict[str, Any]:
 class Client:
     """Define the client."""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         email: str,
         password: str,
