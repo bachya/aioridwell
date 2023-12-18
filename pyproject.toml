@@ -62,7 +62,7 @@ classifiers = [
 PyJWT = ">=2.4.0"
 aiohttp = ">=3.9.0b0"
 certifi = ">=2023.07.22"
-python = ">=3.10,<=3.12"
+python = "^3.10"
 titlecase = "^2.3"
 yarl = ">=1.9.2"
 
