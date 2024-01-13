@@ -310,11 +310,11 @@ async def test_get_pickup_events_cost(
             pickup_events = await account.async_get_pickup_events()
             assert len(pickup_events) == 2
 
-            event_1_cost = await pickup_events[0].async_get_estimated_cost()
-            assert event_1_cost == 22.00
+            event_1_addon_cost = await pickup_events[0].async_get_estimated_addon_cost()
+            assert event_1_addon_cost == 1.00
 
-            event_2_cost = await pickup_events[1].async_get_estimated_cost()
-            assert event_2_cost == 0.00
+            event_2_addon_cost = await pickup_events[1].async_get_estimated_addon_cost()
+            assert event_2_addon_cost == 0.00
 
     aresponses.assert_plan_strictly_followed()
 

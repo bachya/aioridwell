@@ -15,7 +15,7 @@ PASSWORD = "<PASSWORD>"  # noqa: S105
 
 async def main() -> None:
     """Create the aiohttp session and run the example."""
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     async with ClientSession() as session:
         try:
             client = await async_get_client(EMAIL, PASSWORD, session=session)
@@ -29,11 +29,13 @@ async def main() -> None:
                 _LOGGER.info("Events for account ID %s: %s", account.account_id, events)
 
                 first_event = events[0]
-                estimated_cost = await first_event.async_get_estimated_cost()
+                estimated_addon_cost = (
+                    await first_event.async_get_estimated_addon_cost()
+                )
                 _LOGGER.info(
-                    "Estimated cost for event %s: %s",
+                    "Estimated add-on cost for event %s: %s",
                     first_event.event_id,
-                    estimated_cost,
+                    estimated_addon_cost,
                 )
         except RidwellError as err:
             _LOGGER.error("There was an error: %s", err)

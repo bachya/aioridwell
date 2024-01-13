@@ -184,7 +184,7 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-### Calculating a Pickup Event's Estimated Cost
+### Calculating a Pickup Event's Estimated Add-on Cost
 
 ```python
 import asyncio
@@ -200,7 +200,7 @@ async def main() -> None:
         events = await account.async_get_pickup_events()
         # >>> [RidwellPickupEvent(...), ...]
 
-        event_1_cost = await events[0].async_get_estimated_cost()
+        event_1_cost = await events[0].async_get_estimated_addon_cost()
         # >>> 22.00
 
 

@@ -33,7 +33,13 @@ mutation createAuthentication($input: CreateAuthenticationInput!) {
 QUERY_SUBSCRIPTION_PICKUP_QUOTE = """
 query subscriptionPickupQuote($input: SubscriptionPickupQuoteInput!) {
   subscriptionPickupQuote(input: $input) {
-    totalCents
+    addOnEstimatedCents
+    itemizedAvailableCredits {
+      creditCategory
+      amountCents
+      __typename
+    }
+    __typename
   }
 }
 """
