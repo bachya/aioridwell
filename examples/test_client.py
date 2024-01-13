@@ -15,7 +15,7 @@ PASSWORD = "<PASSWORD>"  # noqa: S105
 
 async def main() -> None:
     """Create the aiohttp session and run the example."""
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     async with ClientSession() as session:
         try:
             client = await async_get_client(EMAIL, PASSWORD, session=session)
