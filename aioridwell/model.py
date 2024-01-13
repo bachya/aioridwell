@@ -212,7 +212,7 @@ class RidwellPickupEvent:
             ),
         )
 
-    async def async_get_estimated_cost(self) -> float:
+    async def async_get_estimated_addon_cost(self) -> float:
         """Get the estimated cost (USD) of this pickup based on its pickup types.
 
         Returns:
@@ -241,7 +241,9 @@ class RidwellPickupEvent:
             },
         )
 
-        return cast(float, resp["data"]["subscriptionPickupQuote"]["totalCents"] / 100)
+        return cast(
+            float, resp["data"]["subscriptionPickupQuote"]["addOnEstimatedCents"] / 100
+        )
 
     async def async_opt_in(self) -> None:
         """Opt in to the pickup event."""

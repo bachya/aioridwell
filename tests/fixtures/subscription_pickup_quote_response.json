@@ -1,7 +1,9 @@
 {
   "data": {
     "subscriptionPickupQuote": {
-      "totalCents": 2200
+      "addOnEstimatedCents": 100,
+      "itemizedAvailableCredits": [],
+      "__typename": "SubscriptionPickupQuote"
     }
   }
 }
