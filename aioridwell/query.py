@@ -47,25 +47,59 @@ query subscriptionPickupQuote($input: SubscriptionPickupQuoteInput!) {
 QUERY_SUBSCRIPTION_PICKUPS = """
 query upcomingSubscriptionPickups($subscriptionId: ID!) {
   upcomingSubscriptionPickups(subscriptionId: $subscriptionId) {
-    id
-    state
-    pickupOn
-    pickupProductSelections {
-      pickupOfferPickupProduct {
-        pickupOffer {
-          id
-          priority
-          category {
-            name
-          }
-        }
-        pickupProduct {
-          id
-        }
-      }
-      quantity
-    }
+    ...SubscriptionPickupData
+    __typename
   }
+}
+
+fragment SubscriptionPickupData on SubscriptionPickup {
+  id
+  type
+  state
+  pickupOn
+  schedulabilityState
+  selectedFeaturedOffer {
+    id
+    sanityId
+    __typename
+  }
+  pickupOffers {
+    id
+    sanityId
+    endOn
+    type
+    isAutoOptIn
+    category {
+      slug
+      __typename
+    }
+    __typename
+  }
+  pickupProductSelections {
+    pickupOfferPickupProduct {
+      pickupOffer {
+        id
+        sanityId
+        endOn
+        type
+        isAutoOptIn
+        priority
+        category {
+          name
+          __typename
+        }
+        __typename
+      }
+      pickupProduct {
+        id
+        __typename
+      }
+      __typename
+    }
+    quantity
+    __typename
+  }
+  __typename
 }
 """
 
