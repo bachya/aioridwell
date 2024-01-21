@@ -7,7 +7,7 @@ from time import time
 import jwt
 
 
-def generate_jwt(*, issued_at: float | None = None) -> str:
+def generate_jwt(*, issued_at: float | None = None) -> bytes:
     """Generate a JWT.
 
     Args:
