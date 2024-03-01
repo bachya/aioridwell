@@ -1,4 +1,5 @@
 """Define query strings used by the Ridwell API."""
+
 QUERY_ACCOUNT_DATA = """
 query user($id: ID!) {
   user(id: $id) {

@@ -1,4 +1,5 @@
 """Define data models for various Ridwell objects."""
+
 from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
