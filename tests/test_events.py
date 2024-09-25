@@ -321,7 +321,7 @@ async def test_get_pickup_events_cost(
 
 
 @pytest.mark.asyncio
-async def test_opt_in(  # pylint: disable=too-many-arguments
+async def test_opt_in(  # pylint: disable=too-many-arguments, too-many-positional-arguments
     aresponses: ResponsesMockServer,
     authenticated_ridwell_api_server: ResponsesMockServer,
     caplog: Mock,
