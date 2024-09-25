@@ -14,7 +14,7 @@ from .common import generate_jwt, load_fixture
 @pytest.fixture(name="authenticated_ridwell_api_server")
 def authenticated_ridwell_api_server_fixture(
     authentication_response: dict[str, Any],
-) -> Generator[ResponsesMockServer, None, None]:
+) -> Generator[ResponsesMockServer]:
     """Return a fixture that mocks an authenticated Ridwell API server.
 
     Args:
