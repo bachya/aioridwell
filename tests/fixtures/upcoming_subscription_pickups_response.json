@@ -12,7 +12,7 @@
                 "id": "pickupOffer1",
                 "priority": 1,
                 "category": {
-                  "name": "Threads"
+                  "name": "Recyclable Threads"
                 }
               },
               "pickupProduct": {
@@ -47,6 +47,21 @@
               },
               "pickupProduct": {
                 "id": "pickupProduct3"
+              }
+            },
+            "quantity": 1
+          },
+          {
+            "pickupOfferPickupProduct": {
+              "pickupOffer": {
+                "id": "pickupOffer4",
+                "priority": 1,
+                "category": {
+                  "name": "Rewearable Clothes & Shoes"
+                }
+              },
+              "pickupProduct": {
+                "id": "pickupProduct4"
               }
             },
             "quantity": 1
