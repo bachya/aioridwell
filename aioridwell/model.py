@@ -36,8 +36,9 @@ PICKUP_CATEGORIES_MAP = {
     "Multi-Layer Plastic": PickupCategory.STANDARD,
     "Paint": PickupCategory.ADD_ON,
     "Plastic Film": PickupCategory.STANDARD,
+    "Recyclable Threads": PickupCategory.STANDARD,
+    "Rewearable Clothes & Shoes": PickupCategory.STANDARD,
     "Styrofoam": PickupCategory.ADD_ON,
-    "Threads": PickupCategory.STANDARD,
 }
 
 

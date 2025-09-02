@@ -110,8 +110,8 @@ async def test_get_next_pickup_event(
             assert pickup_event.pickup_date == date(2021, 10, 13)
             assert pickup_event.state == EventState.SCHEDULED
 
-            assert len(pickup_event.pickups) == 3
-            assert pickup_event.pickups[0].name == "Threads"
+            assert len(pickup_event.pickups) == 4
+            assert pickup_event.pickups[0].name == "Recyclable Threads"
             assert pickup_event.pickups[0].offer_id == "pickupOffer1"
             assert pickup_event.pickups[0].priority == 1
             assert pickup_event.pickups[0].product_id == "pickupProduct1"
@@ -129,6 +129,12 @@ async def test_get_next_pickup_event(
             assert pickup_event.pickups[2].product_id == "pickupProduct3"
             assert pickup_event.pickups[2].quantity == 1
             assert pickup_event.pickups[2].category == PickupCategory.ROTATING
+            assert pickup_event.pickups[3].name == "Rewearable Clothes & Shoes"
+            assert pickup_event.pickups[3].offer_id == "pickupOffer4"
+            assert pickup_event.pickups[3].priority == 1
+            assert pickup_event.pickups[3].product_id == "pickupProduct4"
+            assert pickup_event.pickups[3].quantity == 1
+            assert pickup_event.pickups[3].category == PickupCategory.STANDARD
 
             assert any(
                 "Detected assumed rotating pickup: Chocolate" in e.message
@@ -234,8 +240,8 @@ async def test_get_pickup_events(
             assert pickup_events[1].pickup_date == date(2021, 10, 27)
             assert pickup_events[1].state == EventState.INITIALIZED
 
-            assert len(pickup_events[0].pickups) == 3
-            assert pickup_events[0].pickups[0].name == "Threads"
+            assert len(pickup_events[0].pickups) == 4
+            assert pickup_events[0].pickups[0].name == "Recyclable Threads"
             assert pickup_events[0].pickups[0].offer_id == "pickupOffer1"
             assert pickup_events[0].pickups[0].priority == 1
             assert pickup_events[0].pickups[0].product_id == "pickupProduct1"
@@ -253,6 +259,12 @@ async def test_get_pickup_events(
             assert pickup_events[0].pickups[2].product_id == "pickupProduct3"
             assert pickup_events[0].pickups[2].quantity == 1
             assert pickup_events[0].pickups[2].category == PickupCategory.ROTATING
+            assert pickup_events[0].pickups[3].name == "Rewearable Clothes & Shoes"
+            assert pickup_events[0].pickups[3].offer_id == "pickupOffer4"
+            assert pickup_events[0].pickups[3].priority == 1
+            assert pickup_events[0].pickups[3].product_id == "pickupProduct4"
+            assert pickup_events[0].pickups[3].quantity == 1
+            assert pickup_events[0].pickups[3].category == PickupCategory.STANDARD
 
     aresponses.assert_plan_strictly_followed()
 
