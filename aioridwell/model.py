@@ -27,6 +27,33 @@ class PickupCategory(Enum):
     STANDARD = "standard"
 
 
+class OfferType(Enum):
+    """Define a representation of a pickup offer type."""
+
+    ADD_ON = "ADD_ON"
+    BEYOND_THE_BIN = "BEYOND_THE_BIN"
+    CORE = "CORE"
+    FEATURED_ALTERNATIVE = "FEATURED_ALTERNATIVE"
+    FEATURED_PRIMARY = "FEATURED_PRIMARY"
+    UNKNOWN = "UNKNOWN"
+
+
+def convert_offer_type(offer_type: str) -> OfferType:
+    """Convert a raw offer type string into an OfferType.
+
+    Args:
+        offer_type: A raw offer type.
+
+    Returns:
+        A parsed OfferType object.
+    """
+    try:
+        return OfferType(offer_type)
+    except ValueError:
+        LOGGER.warning("Unknown offer type: %s", offer_type)
+        return OfferType.UNKNOWN
+
+
 PICKUP_CATEGORIES_MAP = {
     "Batteries": PickupCategory.STANDARD,
     "Beyond the Bin": PickupCategory.ADD_ON,
@@ -120,29 +147,53 @@ class RidwellAccount:
             },
         )
 
-        return [
-            RidwellPickupEvent(
-                self._async_request,
-                event_data["id"],
-                datetime.strptime(event_data["pickupOn"], "%Y-%m-%d").date(),
-                [
-                    RidwellPickup(
-                        titlecase(
-                            pickup["pickupOfferPickupProduct"]["pickupOffer"][
-                                "category"
-                            ]["name"]
-                        ),
-                        pickup["pickupOfferPickupProduct"]["pickupOffer"]["id"],
-                        pickup["pickupOfferPickupProduct"]["pickupOffer"]["priority"],
-                        pickup["pickupOfferPickupProduct"]["pickupProduct"]["id"],
-                        pickup["quantity"],
-                    )
-                    for pickup in event_data["pickupProductSelections"]
-                ],
-                convert_pickup_event_state(event_data["state"]),
+        events = []
+        for event_data in resp["data"]["upcomingSubscriptionPickups"]:
+            # Parse pickup product selections (existing functionality)
+            pickups = [
+                RidwellPickup(
+                    titlecase(
+                        pickup["pickupOfferPickupProduct"]["pickupOffer"]["category"][
+                            "name"
+                        ]
+                    ),
+                    pickup["pickupOfferPickupProduct"]["pickupOffer"]["id"],
+                    pickup["pickupOfferPickupProduct"]["pickupOffer"]["priority"],
+                    pickup["pickupOfferPickupProduct"]["pickupProduct"]["id"],
+                    pickup["quantity"],
+                )
+                for pickup in event_data["pickupProductSelections"]
+            ]
+
+            # Parse pickup offers (featured categories and alternatives)
+            selected_offer_id = None
+            if event_data.get("selectedFeaturedOffer"):
+                selected_offer_id = event_data["selectedFeaturedOffer"].get("id")
+
+            pickup_offers = [
+                RidwellPickupOffer(
+                    offer_id=offer["id"],
+                    category_name=titlecase(offer["category"]["name"]),
+                    category_slug=offer["category"]["slug"],
+                    offer_type=convert_offer_type(offer["type"]),
+                    is_selected=(offer["id"] == selected_offer_id),
+                )
+                for offer in event_data.get("pickupOffers", [])
+                if offer.get("category") and offer["category"].get("name")
+            ]
+
+            events.append(
+                RidwellPickupEvent(
+                    self._async_request,
+                    event_data["id"],
+                    datetime.strptime(event_data["pickupOn"], "%Y-%m-%d").date(),
+                    pickups,
+                    convert_pickup_event_state(event_data["state"]),
+                    pickup_offers,
+                )
             )
-            for event_data in resp["data"]["upcomingSubscriptionPickups"]
-        ]
+
+        return events
 
 
 @dataclass(frozen=True)
@@ -177,6 +228,17 @@ class RidwellPickup:
 
 
 @dataclass(frozen=True)
+class RidwellPickupOffer:
+    """Define a Ridwell pickup offer (available category for a pickup event)."""
+
+    offer_id: str
+    category_name: str
+    category_slug: str
+    offer_type: OfferType
+    is_selected: bool = False
+
+
+@dataclass(frozen=True)
 class RidwellPickupEvent:
     """Define a Ridwell pickup event."""
 
@@ -186,6 +248,44 @@ class RidwellPickupEvent:
     pickup_date: date
     pickups: list[RidwellPickup]
     state: EventState
+    pickup_offers: list[RidwellPickupOffer] = field(default_factory=list)
+
+    @property
+    def featured_category(self) -> RidwellPickupOffer | None:
+        """Get the featured (primary) category for this pickup event.
+
+        Returns:
+            The featured category offer, or None if not available.
+        """
+        for offer in self.pickup_offers:
+            if offer.offer_type == OfferType.FEATURED_PRIMARY:
+                return offer
+        return None
+
+    @property
+    def selected_featured_offer(self) -> RidwellPickupOffer | None:
+        """Get the currently selected featured offer for this pickup event.
+
+        Returns:
+            The selected offer, or None if nothing is selected.
+        """
+        for offer in self.pickup_offers:
+            if offer.is_selected:
+                return offer
+        return None
+
+    @property
+    def featured_alternatives(self) -> list[RidwellPickupOffer]:
+        """Get the alternative featured categories available for this pickup event.
+
+        Returns:
+            A list of alternative featured category offers.
+        """
+        return [
+            offer
+            for offer in self.pickup_offers
+            if offer.offer_type == OfferType.FEATURED_ALTERNATIVE
+        ]
 
     async def _async_opt(self, state: EventState) -> None:
         """Define a helper to opt in/out to/from the pickup event.

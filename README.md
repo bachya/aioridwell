@@ -151,6 +151,18 @@ The `RidwellPickupEvent` object comes with some useful properties:
 - `pickup_date`: the date of the pickup (in `datetime.date` format)
 - `pickups`: a list of `RidwellPickup` objects
 - `state`: an `EventState` enum whose name represents the current state of the pickup event
+- `pickup_offers`: a list of `RidwellPickupOffer` objects representing available categories
+- `featured_category`: the primary featured category for this event (or `None`)
+- `selected_featured_offer`: the currently selected featured offer (or `None`)
+- `featured_alternatives`: a list of alternative featured categories available
+
+The `RidwellPickupOffer` object comes with some useful properties:
+
+- `offer_id`: the Ridwell ID for this offer
+- `category_name`: the display name of the category
+- `category_slug`: the URL-friendly slug for the category
+- `offer_type`: an `OfferType` enum (CORE, ADD_ON, FEATURED_PRIMARY, FEATURED_ALTERNATIVE, BEYOND_THE_BIN)
+- `is_selected`: whether this offer is currently selected for the pickup event
 
 Likewise, the `RidwellPickup` object comes with some useful properties:
 
@@ -160,6 +172,40 @@ Likewise, the `RidwellPickup` object comes with some useful properties:
 - `priority`: the pickup priority
 - `product_id`: the Ridwell ID for this particular product
 - `quantity`: the amount of the product being picked up
+
+### Getting Featured Categories
+
+Each pickup event has a featured (rotating) category and alternative options:
+
+```python
+import asyncio
+
+from aioridwell import async_get_client
+
+
+async def main() -> None:
+    client = await async_get_client("<EMAIL>", "<PASSWORD>")
+
+    accounts = await client.async_get_accounts()
+    for account in accounts.values():
+        events = await account.async_get_pickup_events()
+
+        for event in events:
+            # Get the featured category for this pickup
+            if event.featured_category:
+                print(f"{event.pickup_date}: {event.featured_category.category_name}")
+
+            # Get what's currently selected
+            if event.selected_featured_offer:
+                print(f"  Selected: {event.selected_featured_offer.category_name}")
+
+            # Get available alternatives
+            for alt in event.featured_alternatives:
+                print(f"  Alternative: {alt.category_name}")
+
+
+asyncio.run(main())
+```
 
 ### Opting Into or Out Of a Pickup Event
 

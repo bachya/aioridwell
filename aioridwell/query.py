@@ -72,6 +72,7 @@ fragment SubscriptionPickupData on SubscriptionPickup {
     isAutoOptIn
     category {
       slug
+      name
       __typename
     }
     __typename
