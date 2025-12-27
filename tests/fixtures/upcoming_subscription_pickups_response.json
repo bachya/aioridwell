@@ -5,6 +5,43 @@
         "id": "pickup1",
         "state": "scheduled",
         "pickupOn": "2021-10-13",
+        "selectedFeaturedOffer": {
+          "id": "featuredOffer1"
+        },
+        "pickupOffers": [
+          {
+            "id": "coreOffer1",
+            "type": "CORE",
+            "category": {
+              "name": "Batteries",
+              "slug": "batteries"
+            }
+          },
+          {
+            "id": "featuredOffer1",
+            "type": "FEATURED_PRIMARY",
+            "category": {
+              "name": "Chocolate",
+              "slug": "chocolate"
+            }
+          },
+          {
+            "id": "altOffer1",
+            "type": "FEATURED_ALTERNATIVE",
+            "category": {
+              "name": "Coffee Capsules",
+              "slug": "coffee-capsules"
+            }
+          },
+          {
+            "id": "altOffer2",
+            "type": "FEATURED_ALTERNATIVE",
+            "category": {
+              "name": "Corks",
+              "slug": "corks"
+            }
+          }
+        ],
         "pickupProductSelections": [
           {
             "pickupOfferPickupProduct": {
@@ -72,6 +109,7 @@
         "id": "pickup2",
         "state": "initialized",
         "pickupOn": "2021-10-27",
+        "pickupOffers": [],
         "pickupProductSelections": []
       }
     ]

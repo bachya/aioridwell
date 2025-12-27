@@ -12,7 +12,7 @@ from freezegun import freeze_time
 
 from aioridwell import async_get_client
 from aioridwell.errors import RidwellError
-from aioridwell.model import EventState, PickupCategory
+from aioridwell.model import EventState, OfferType, PickupCategory, convert_offer_type
 
 
 @pytest.mark.asyncio
@@ -429,3 +429,80 @@ async def test_opt_in(  # pylint: disable=too-many-arguments, too-many-positiona
             assert pickup_events[0].state == EventState.UNKNOWN
 
     aresponses.assert_plan_strictly_followed()
+
+
+@pytest.mark.asyncio
+async def test_featured_categories(
+    aresponses: ResponsesMockServer,
+    authenticated_ridwell_api_server: ResponsesMockServer,
+    upcoming_subscription_pickups_response: dict[str, Any],
+    user_response: dict[str, Any],
+) -> None:
+    """Test featured category properties on pickup events.
+
+    Args:
+        aresponses: An aresponses server.
+        authenticated_ridwell_api_server: A mocked authenticated Ridwell API server.
+        upcoming_subscription_pickups_response: An API response payload.
+        user_response: An API response payload.
+    """
+    async with authenticated_ridwell_api_server:
+        authenticated_ridwell_api_server.add(
+            "api.ridwell.com",
+            "/",
+            "post",
+            response=aiohttp.web_response.json_response(user_response, status=200),
+        )
+        authenticated_ridwell_api_server.add(
+            "api.ridwell.com",
+            "/",
+            "post",
+            response=aiohttp.web_response.json_response(
+                upcoming_subscription_pickups_response, status=200
+            ),
+        )
+
+        async with aiohttp.ClientSession() as session:
+            client = await async_get_client("user", "password", session=session)
+            accounts = await client.async_get_accounts()
+            account = accounts["accountId1"]
+            pickup_events = await account.async_get_pickup_events()
+
+            # Test featured_category property (returns FEATURED_PRIMARY offer)
+            assert pickup_events[0].featured_category is not None
+            assert pickup_events[0].featured_category.category_name == "Chocolate"
+            assert pickup_events[0].featured_category.offer_type == OfferType.FEATURED_PRIMARY
+
+            # Test selected_featured_offer property (returns offer matching selectedFeaturedOffer.id)
+            assert pickup_events[0].selected_featured_offer is not None
+            assert pickup_events[0].selected_featured_offer.offer_id == "featuredOffer1"
+            assert pickup_events[0].selected_featured_offer.is_selected is True
+
+            # Test featured_alternatives property (returns FEATURED_ALTERNATIVE offers)
+            alternatives = pickup_events[0].featured_alternatives
+            assert len(alternatives) == 2
+            assert alternatives[0].category_name == "Coffee Capsules"
+            assert alternatives[0].offer_type == OfferType.FEATURED_ALTERNATIVE
+            assert alternatives[1].category_name == "Corks"
+            assert alternatives[1].offer_type == OfferType.FEATURED_ALTERNATIVE
+
+            # Test pickup_offers list
+            assert len(pickup_events[0].pickup_offers) == 4
+
+            # Test event without featured offers returns None/empty
+            assert pickup_events[1].featured_category is None
+            assert pickup_events[1].selected_featured_offer is None
+            assert pickup_events[1].featured_alternatives == []
+
+    aresponses.assert_plan_strictly_followed()
+
+
+def test_convert_offer_type_unknown(caplog: Mock) -> None:
+    """Test convert_offer_type with an unknown offer type.
+
+    Args:
+        caplog: A mocked logging utility.
+    """
+    result = convert_offer_type("INVALID_TYPE")
+    assert result == OfferType.UNKNOWN
+    assert any("Unknown offer type: INVALID_TYPE" in e.message for e in caplog.records)
