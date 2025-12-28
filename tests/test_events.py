@@ -471,7 +471,10 @@ async def test_featured_categories(
             # Test featured_category property (returns FEATURED_PRIMARY offer)
             assert pickup_events[0].featured_category is not None
             assert pickup_events[0].featured_category.category_name == "Chocolate"
-            assert pickup_events[0].featured_category.offer_type == OfferType.FEATURED_PRIMARY
+            assert (
+                pickup_events[0].featured_category.offer_type
+                == OfferType.FEATURED_PRIMARY
+            )
 
             # Test selected_featured_offer property (returns offer matching selectedFeaturedOffer.id)
             assert pickup_events[0].selected_featured_offer is not None
