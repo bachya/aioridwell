@@ -476,7 +476,8 @@ async def test_featured_categories(
                 == OfferType.FEATURED_PRIMARY
             )
 
-            # Test selected_featured_offer property (returns offer matching selectedFeaturedOffer.id)
+            # Test selected_featured_offer property
+            # (returns offer matching selectedFeaturedOffer.id)
             assert pickup_events[0].selected_featured_offer is not None
             assert pickup_events[0].selected_featured_offer.offer_id == "featuredOffer1"
             assert pickup_events[0].selected_featured_offer.is_selected is True
